@@ -1,5 +1,5 @@
 // Electron main process: window, native menu, file dialogs.
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, nativeTheme, screen } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
@@ -11,12 +11,56 @@ function fileFromArgs(argv) {
   return argv.slice(1).find(a => /\.fprg$/i.test(a) && fs.existsSync(a)) || null;
 }
 
+/* ---------- window size ---------- */
+
+// Preferred size; on smaller screens (e.g. a 14" laptop) the window shrinks to fit the work area.
+const PREFERRED = { width: 1400, height: 880 };
+const MINIMUM = { width: 760, height: 480 };
+const stateFile = () => path.join(app.getPath('userData'), 'window-state.json');
+
+function readWindowState() {
+  try {
+    return JSON.parse(fs.readFileSync(stateFile(), 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+function saveWindowState() {
+  try {
+    fs.writeFileSync(stateFile(), JSON.stringify({ ...win.getNormalBounds(), maximized: win.isMaximized() }));
+  } catch { /* not essential */ }
+}
+
+// The last size and position if they still fit on a connected screen, otherwise a size that fits.
+function initialBounds() {
+  const saved = readWindowState();
+  if (saved && saved.width >= MINIMUM.width && saved.height >= MINIMUM.height) {
+    const area = screen.getDisplayMatching(saved).workArea;
+    const inside = saved.x >= area.x && saved.y >= area.y
+      && saved.x + saved.width <= area.x + area.width && saved.y + saved.height <= area.y + area.height;
+    if (inside) return saved;
+  }
+  const area = screen.getPrimaryDisplay().workArea;
+  const width = Math.max(MINIMUM.width, Math.min(PREFERRED.width, Math.round(area.width * 0.94)));
+  const height = Math.max(MINIMUM.height, Math.min(PREFERRED.height, Math.round(area.height * 0.94)));
+  return {
+    width, height,
+    x: area.x + Math.round((area.width - width) / 2),
+    y: area.y + Math.round((area.height - height) / 2),
+  };
+}
+
 function createWindow() {
+  const bounds = initialBounds();
   win = new BrowserWindow({
-    width: 1400,
-    height: 880,
-    minWidth: 800,
-    minHeight: 500,
+    x: bounds.x,
+    y: bounds.y,
+    width: bounds.width,
+    height: bounds.height,
+    minWidth: MINIMUM.width,
+    minHeight: MINIMUM.height,
+    show: false,
     title: 'OpenflowDiagram',
     icon: path.join(__dirname, 'build', 'icon.png'),
     backgroundColor: '#f5f5f7',
@@ -29,8 +73,15 @@ function createWindow() {
     },
   });
   win.loadFile(path.join(__dirname, 'src', 'index.html'));
+  win.once('ready-to-show', () => {
+    if (bounds.maximized) win.maximize();
+    win.show();
+  });
   win.on('close', e => {
-    if (allowClose) return;
+    if (allowClose) {
+      saveWindowState();
+      return;
+    }
     e.preventDefault();
     win.webContents.send('app:close-request');
   });
@@ -87,8 +138,9 @@ ipcMain.on('help:guide', () => {
     guideWin.focus();
     return;
   }
+  const area = screen.getDisplayMatching(win.getBounds()).workArea;
   guideWin = new BrowserWindow({
-    width: 1240, height: 900, title: 'OpenflowDiagram — Guida introduttiva', icon: path.join(__dirname, 'build', 'icon.png'),
+    width: Math.min(1240, Math.round(area.width * 0.9)), height: Math.min(900, Math.round(area.height * 0.92)), title: 'OpenflowDiagram — Guida introduttiva', icon: path.join(__dirname, 'build', 'icon.png'),
     backgroundColor: '#f2f2f7', autoHideMenuBar: true,
     webPreferences: { sandbox: true, contextIsolation: true, nodeIntegration: false },
   });

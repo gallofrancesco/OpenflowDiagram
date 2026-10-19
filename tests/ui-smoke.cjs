@@ -21,7 +21,12 @@ app.whenReady().then(async () => {
   Menu.setApplicationMenu(null);
   const win = new BrowserWindow({
     // Offscreen rendering paints every frame without showing a window on the desktop.
-    width: 1400, height: 880, show: false,
+    // --size=WxH simulates smaller screens (default 1400x880).
+    ...(() => {
+      const m = /^--size=(\d+)x(\d+)$/.exec(process.argv.find(a => a.startsWith('--size=')) || '');
+      return m ? { width: +m[1], height: +m[2] } : { width: 1400, height: 880 };
+    })(),
+    show: false,
     webPreferences: { preload: path.join(root, 'preload.cjs'), contextIsolation: true, sandbox: false, offscreen: true },
   });
   let lastFrame = null;

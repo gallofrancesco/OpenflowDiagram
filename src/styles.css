@@ -129,7 +129,27 @@ input[type=checkbox], input[type=radio] { width: 17px; height: 17px; accent-colo
 #speed { min-width: 112px; }
 #func-select { min-width: 150px; font-weight: 500; }
 .tool.icon-only .lbl { display: none; }
-@media (max-width: 1150px) { .tool .lbl { display: none; } }
+/* Small laptop screens (14"): keep the toolbar on one line. */
+@media (max-width: 1320px) {
+  #toolbar { gap: 6px; padding: 7px 10px; }
+  .tool { padding: 5px 9px; }
+  .tool.toggle .lbl, .tool[data-cmd="manageFunctions"] .lbl { display: none; }
+  #speed { min-width: 96px; }
+  #func-select { min-width: 120px; }
+}
+@media (max-width: 1000px) { .tool .lbl { display: none; } }
+/* Short screens: tighter margins so the chart keeps as much height as possible. */
+@media (max-height: 720px) {
+  #toolbar { padding-top: 6px; padding-bottom: 6px; }
+  .tool { min-height: 32px; }
+  #workspace { padding: 8px; }
+  #side { gap: 8px; }
+  #splitter { width: 8px; }
+  .panel header { padding: 5px 8px 5px 14px; }
+  #view-tabs { padding-top: 5px; }
+  .view-tab { min-height: 32px; padding: 4px 14px; }
+  #statusbar { padding: 0 14px 4px; }
+}
 
 /* ---------- workspace ---------- */
 #workspace { flex: 1; display: flex; min-height: 0; position: relative; padding: 14px; }
