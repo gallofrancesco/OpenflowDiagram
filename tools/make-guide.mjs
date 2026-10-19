@@ -47,7 +47,7 @@ const badge = (area, n) => {
   return `<span class="badge-n" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%">${n}</span>`;
 };
 const overview = `<div class="annotated">
-  <img src="img/overview.png" alt="La finestra principale di Flusso">
+  <img src="img/overview.png" alt="La finestra principale di Openflow">
   ${CALLOUTS.map(([a], i) => badge(a, i + 1)).join('\n  ')}
 </div>
 <ol class="legend">${CALLOUTS.map(([, l]) => `<li>${l}</li>`).join('')}</ol>`;
@@ -98,10 +98,10 @@ const shortcutsTable = `<table class="data compact"><thead><tr><th>Tasti</th><th
   SHORTCUTS.map(([k, a]) => `<tr><td>${k.split(' / ').map(kbd).join(' / ')}</td><td>${a}</td></tr>`).join('')}</tbody></table>`;
 
 const SECTIONS = [
-  ['benvenuto', 'Benvenuto in Flusso'], ['finestra', 'La finestra principale'], ['primo', 'Il primo programma'],
+  ['benvenuto', 'Benvenuto in Openflow'], ['finestra', 'La finestra principale'], ['primo', 'Il primo programma'],
   ['blocchi', 'I blocchi'], ['linguaggio', 'Tipi, operatori e funzioni'], ['esecuzione', 'Eseguire e fare debug'],
   ['console', 'Console e Variabili'], ['funzioni', 'Funzioni'], ['codice', 'Codice sorgente'],
-  ['traccia', 'Tabella di traccia'], ['file', 'File, salvataggio ed esportazione'], ['personalizza', 'Personalizzare Flusso'],
+  ['traccia', 'Tabella di traccia'], ['file', 'File, salvataggio ed esportazione'], ['personalizza', 'Personalizzare Openflow'],
   ['tasti', 'Scorciatoie da tastiera'], ['esempi', 'Esempi ed esercizi'], ['faq', 'Domande frequenti'],
 ];
 const h2 = (id, n) => `<h2 id="${id}"><span class="num">${n}</span>${SECTIONS.find(s => s[0] === id)[1]}</h2>`;
@@ -114,14 +114,14 @@ const body = `
   <div>
     <p class="eyebrow">Guida introduttiva · versione ${pkg.version}</p>
     <h1>Programmare con i diagrammi di flusso</h1>
-    <p class="lead">Tutto quello che serve per usare Flusso: creare un programma, eseguirlo passo passo, seguirne i valori
+    <p class="lead">Tutto quello che serve per usare Openflow: creare un programma, eseguirlo passo passo, seguirne i valori
     con la tabella di traccia e tradurlo in C, C++, Java o Python.</p>
   </div>
 </header>
 
 <section>
 ${sec('benvenuto')}
-<p>Flusso è un ambiente per imparare a programmare <b>disegnando</b>: invece di scrivere codice, costruisci un diagramma di
+<p>Openflow è un ambiente per imparare a programmare <b>disegnando</b>: invece di scrivere codice, costruisci un diagramma di
 flusso con blocchi grafici (dichiarazioni, input, output, condizioni, cicli…) e lo esegui subito. Puoi:</p>
 <div class="cards">
   <div class="card"><div class="card-title">Costruire</div>Inserisci i blocchi cliccando sulle frecce del diagramma.</div>
@@ -134,7 +134,7 @@ ${note('I programmi si salvano in file <code>.fprg</code>, lo stesso formato di 
 
 <section>
 ${sec('finestra')}
-<p>All'avvio Flusso mostra un programma vuoto. Questa è la finestra con un programma d'esempio appena eseguito:</p>
+<p>All'avvio Openflow mostra un programma vuoto. Questa è la finestra con un programma d'esempio appena eseguito:</p>
 ${overview}
 <p>La <b>barra dei menu</b> (File, Modifica, Programma, Visualizza, Strumenti, Aiuto) contiene tutti i comandi, anche quelli
 che non hanno un pulsante. Console e Variabili si possono chiudere con la <kbd>✕</kbd> e riaprire con i pulsanti a destra
@@ -166,7 +166,7 @@ ${sec('primo')}
 </div></div>
 <div class="step"><div class="step-n">4</div><div>
   <h3>Controlla il diagramma</h3>
-  <p>Il programma completo è questo. Se un campo è vuoto o un'espressione è sbagliata, Flusso te lo dice subito nella finestra del blocco;
+  <p>Il programma completo è questo. Se un campo è vuoto o un'espressione è sbagliata, Openflow te lo dice subito nella finestra del blocco;
   un blocco lasciato vuoto appare tratteggiato.</p>
   ${fig('tutorial-chart', 'Il programma "Saluto".', 'narrow')}
 </div></div>
@@ -244,7 +244,7 @@ Da lì puoi continuare con <b>Esegui</b> o con <b>Passo</b>. <b>Programma › Ig
 <b>Rimuovi tutti i breakpoint</b> li elimina.</p>
 ${fig('breakpoint', 'Il programma in pausa sul breakpoint.')}
 <h3>Errori</h3>
-<p>Se qualcosa va storto (divisione per zero, variabile non inizializzata, indice fuori dall'array…) Flusso si ferma,
+<p>Se qualcosa va storto (divisione per zero, variabile non inizializzata, indice fuori dall'array…) Openflow si ferma,
 evidenzia in rosso il blocco responsabile e spiega il problema in italiano.</p>
 ${fig('error', 'Un errore di esecuzione: il blocco <code>n = 27 / 0</code> è evidenziato in rosso.')}
 </section>
@@ -292,7 +292,7 @@ ${sec('traccia')}
 <p>La <b>tabella di traccia</b> è il modo classico per capire cosa fa un algoritmo: una riga per ogni blocco eseguito, con i valori
 delle variabili e l'esito delle condizioni. Si apre con il pulsante <b>Traccia</b> (<kbd>F7</kbd>) e compare in una scheda accanto al diagramma.</p>
 <h3>1. Scegli cosa tracciare</h3>
-<p>La prima volta Flusso chiede quali <b>variabili</b> seguire (raggruppate per funzione) e quali <b>espressioni o condizioni</b>
+<p>La prima volta Openflow chiede quali <b>variabili</b> seguire (raggruppate per funzione) e quali <b>espressioni o condizioni</b>
 calcolare a ogni passo, per esempio <code>i % 2 == 0</code>. Puoi cambiare la scelta con <b>Scegli valori…</b>.</p>
 ${fig('trace-setup', 'La scelta dei valori: variabili di Main, la variabile r della funzione Fact e una condizione.', 'narrow')}
 <h3>2. Costruiscila passo passo</h3>
@@ -382,7 +382,7 @@ const html = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'unsafe-inline'">
-<title>Flusso — Guida introduttiva</title>
+<title>Openflow — Guida introduttiva</title>
 <style>
 :root {
   --primary: #007aff; --primary-subtle: #e6f1ff; --text: #1c1c1e; --text-2: #3a3a3c; --muted: #6e6e73;
@@ -486,12 +486,12 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 10px
 <body>
 <div class="layout">
 <nav class="toc" aria-label="Indice">
-  <div class="brand"><img src="../../build/icon.png" alt="">Flusso</div>
+  <div class="brand"><img src="../../build/icon.png" alt="">Openflow</div>
   ${toc}
 </nav>
 <main>
 ${body}
-<footer>Flusso ${pkg.version} · Guida introduttiva</footer>
+<footer>Openflow ${pkg.version} · Guida introduttiva</footer>
 </main>
 </div>
 </body>

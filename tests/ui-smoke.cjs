@@ -11,8 +11,8 @@ const errors = [];
 
 ipcMain.on('menu:set', (_e, tpl) => { global.menuTemplate = tpl; });
 ipcMain.on('renderer:ready', () => {});
-// Save dialogs answer with a file in FLUSSO_SAVE_DIR (if set); --commands=a,b sends menu commands.
-const saveDir = process.env.FLUSSO_SAVE_DIR;
+// Save dialogs answer with a file in OPENFLOW_SAVE_DIR (if set); --commands=a,b sends menu commands.
+const saveDir = process.env.OPENFLOW_SAVE_DIR;
 const commandsArg = (process.argv.find(a => a.startsWith('--commands=')) || '').slice(11);
 ipcMain.handle('dialog:open', () => null);
 ipcMain.handle('dialog:save', (_e, o) => (saveDir ? path.join(saveDir, path.basename(o.defaultPath || 'out')) : null));

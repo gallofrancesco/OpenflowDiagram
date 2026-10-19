@@ -32,7 +32,7 @@ export const PROGRAMS = {
     build: () => program('Stringhe', [
       S('declare', { names: 'nome, inverso', type: 'String' }),
       S('declare', { names: 'i', type: 'Integer' }),
-      S('assign', { variable: 'nome', expression: '"Flusso"' }),
+      S('assign', { variable: 'nome', expression: '"Openflow"' }),
       S('assign', { variable: 'inverso', expression: '""' }),
       S('for', { variable: 'i', start: 'Len(nome) - 1', end: '0', direction: 'dec', body: [
         S('assign', { variable: 'inverso', expression: 'inverso & Char(nome, i)' }),
@@ -42,7 +42,7 @@ export const PROGRAMS = {
       S('output', { expression: 'ToCode("A") + 1' }),
       S('output', { expression: 'ToChar(66) & ToString(42) & "!"' }),
       S('output', { expression: 'ToInteger("17") * 2' }),
-      S('if', { expression: '"abc" < "abd" and nome == "Flusso"', then: [S('output', { expression: '"ordinato"' })], else: [S('output', { expression: '"no"' })] }),
+      S('if', { expression: '"abc" < "abd" and nome == "Openflow"', then: [S('output', { expression: '"ordinato"' })], else: [S('output', { expression: '"no"' })] }),
       S('output', { expression: '"a" + "b"', newline: false }),
       S('output', { expression: '"c"' }),
     ]),
@@ -141,10 +141,10 @@ export const PROGRAMS = {
     input: [],
     build: () => program('File', [
       S('declare', { names: 'i, x, tot', type: 'Integer' }),
-      S('open', { expression: '"flusso_test_dati.txt"', mode: 'write' }),
+      S('open', { expression: '"openflow_dati.txt"', mode: 'write' }),
       S('for', { variable: 'i', start: '1', end: '5', body: [S('write', { expression: 'i * i' })] }),
       S('close'),
-      S('open', { expression: '"flusso_test_dati.txt"', mode: 'read' }),
+      S('open', { expression: '"openflow_dati.txt"', mode: 'read' }),
       S('assign', { variable: 'tot', expression: '0' }),
       S('while', { expression: 'not EOF()', body: [
         S('read', { variable: 'x' }),

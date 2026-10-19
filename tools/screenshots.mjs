@@ -12,7 +12,7 @@ const electron = join(root, 'node_modules', 'electron', 'dist', 'electron.exe');
 const ex = name => join(root, 'examples', `${name}.fprg`);
 mkdirSync(outDir, { recursive: true });
 const tempCopy = name => {
-  const dir = join(tmpdir(), 'flusso-shots');
+  const dir = join(tmpdir(), 'openflow-shots');
   mkdirSync(dir, { recursive: true });
   const file = join(dir, `${name}.fprg`);
   copyFileSync(ex(name), file);
@@ -311,7 +311,7 @@ let failures = 0;
 
 for (const [name, sc] of Object.entries(SCENARIOS)) {
   if (only.length && !only.includes(name)) continue;
-  const scriptFile = join(tmpdir(), `flusso-shot-${name}.js`);
+  const scriptFile = join(tmpdir(), `openflow-shot-${name}.js`);
   writeFileSync(scriptFile, `(async () => {\n${LIB}\nreturn await (${sc.script.toString()})();\n})();`);
   const args = [join(root, 'tests', 'ui-smoke.cjs'), join(outDir, `${name}.png`), sc.program || '', scriptFile, '--fresh'];
   if (sc.commands) args.push(`--commands=${sc.commands.join(',')}`);

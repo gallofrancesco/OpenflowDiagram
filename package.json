@@ -1,6 +1,6 @@
 {
-  "name": "flusso",
-  "productName": "Flusso",
+  "name": "openflow",
+  "productName": "Openflow",
   "version": "1.0.0",
   "description": "Ambiente di programmazione con diagrammi di flusso, con traduzione in C, C++, Java e Python",
   "author": "Francesco Gallo",
@@ -22,9 +22,9 @@
     "electron-builder": "26.15.3"
   },
   "build": {
-    "appId": "app.flusso.editor",
-    "productName": "Flusso",
-    "artifactName": "Flusso-${version}-${os}-${arch}.${ext}",
+    "appId": "app.openflow.editor",
+    "productName": "Openflow",
+    "artifactName": "Openflow-${version}-${os}-${arch}.${ext}",
     "directories": { "output": "dist" },
     "files": ["main.cjs", "preload.cjs", "package.json", "src/**/*", "build/icon.png"],
     "extraResources": [{ "from": "examples", "to": "examples" }],
@@ -38,14 +38,14 @@
     },
     "win": { "target": "nsis", "icon": "build/icon.png" },
     "nsis": {
-      "artifactName": "Flusso Setup ${version}.${ext}",
+      "artifactName": "Openflow Setup ${version}.${ext}",
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Flusso",
-      "uninstallDisplayName": "Flusso"
+      "shortcutName": "Openflow",
+      "uninstallDisplayName": "Openflow"
     },
     "mac": {
       "target": [{ "target": "dmg", "arch": ["universal"] }, { "target": "zip", "arch": ["universal"] }],
@@ -53,14 +53,14 @@
       "category": "public.app-category.education",
       "hardenedRuntime": true
     },
-    "dmg": { "title": "Flusso ${version}" },
+    "dmg": { "title": "Openflow ${version}" },
     "linux": {
       "target": ["AppImage", "deb", "tar.gz"],
       "icon": "build/icon.png",
       "category": "Education",
       "maintainer": "Francesco Gallo",
       "synopsis": "Programmare con i diagrammi di flusso",
-      "desktop": { "entry": { "Name": "Flusso", "Comment": "Programmare con i diagrammi di flusso" } }
+      "desktop": { "entry": { "Name": "Openflow", "Comment": "Programmare con i diagrammi di flusso" } }
     }
   }
 }

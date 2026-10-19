@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'unsafe-inline'">
-<title>Flusso — Guida introduttiva</title>
+<title>Openflow — Guida introduttiva</title>
 <style>
 :root {
   --primary: #007aff; --primary-subtle: #e6f1ff; --text: #1c1c1e; --text-2: #3a3a3c; --muted: #6e6e73;
@@ -108,8 +108,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 10px
 <body>
 <div class="layout">
 <nav class="toc" aria-label="Indice">
-  <div class="brand"><img src="../../build/icon.png" alt="">Flusso</div>
-  <a href="#benvenuto"><span>1</span>Benvenuto in Flusso</a><a href="#finestra"><span>2</span>La finestra principale</a><a href="#primo"><span>3</span>Il primo programma</a><a href="#blocchi"><span>4</span>I blocchi</a><a href="#linguaggio"><span>5</span>Tipi, operatori e funzioni</a><a href="#esecuzione"><span>6</span>Eseguire e fare debug</a><a href="#console"><span>7</span>Console e Variabili</a><a href="#funzioni"><span>8</span>Funzioni</a><a href="#codice"><span>9</span>Codice sorgente</a><a href="#traccia"><span>10</span>Tabella di traccia</a><a href="#file"><span>11</span>File, salvataggio ed esportazione</a><a href="#personalizza"><span>12</span>Personalizzare Flusso</a><a href="#tasti"><span>13</span>Scorciatoie da tastiera</a><a href="#esempi"><span>14</span>Esempi ed esercizi</a><a href="#faq"><span>15</span>Domande frequenti</a>
+  <div class="brand"><img src="../../build/icon.png" alt="">Openflow</div>
+  <a href="#benvenuto"><span>1</span>Benvenuto in Openflow</a><a href="#finestra"><span>2</span>La finestra principale</a><a href="#primo"><span>3</span>Il primo programma</a><a href="#blocchi"><span>4</span>I blocchi</a><a href="#linguaggio"><span>5</span>Tipi, operatori e funzioni</a><a href="#esecuzione"><span>6</span>Eseguire e fare debug</a><a href="#console"><span>7</span>Console e Variabili</a><a href="#funzioni"><span>8</span>Funzioni</a><a href="#codice"><span>9</span>Codice sorgente</a><a href="#traccia"><span>10</span>Tabella di traccia</a><a href="#file"><span>11</span>File, salvataggio ed esportazione</a><a href="#personalizza"><span>12</span>Personalizzare Openflow</a><a href="#tasti"><span>13</span>Scorciatoie da tastiera</a><a href="#esempi"><span>14</span>Esempi ed esercizi</a><a href="#faq"><span>15</span>Domande frequenti</a>
 </nav>
 <main>
 
@@ -118,14 +118,14 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 10px
   <div>
     <p class="eyebrow">Guida introduttiva · versione 1.0.0</p>
     <h1>Programmare con i diagrammi di flusso</h1>
-    <p class="lead">Tutto quello che serve per usare Flusso: creare un programma, eseguirlo passo passo, seguirne i valori
+    <p class="lead">Tutto quello che serve per usare Openflow: creare un programma, eseguirlo passo passo, seguirne i valori
     con la tabella di traccia e tradurlo in C, C++, Java o Python.</p>
   </div>
 </header>
 
 <section>
-<h2 id="benvenuto"><span class="num">1</span>Benvenuto in Flusso</h2>
-<p>Flusso è un ambiente per imparare a programmare <b>disegnando</b>: invece di scrivere codice, costruisci un diagramma di
+<h2 id="benvenuto"><span class="num">1</span>Benvenuto in Openflow</h2>
+<p>Openflow è un ambiente per imparare a programmare <b>disegnando</b>: invece di scrivere codice, costruisci un diagramma di
 flusso con blocchi grafici (dichiarazioni, input, output, condizioni, cicli…) e lo esegui subito. Puoi:</p>
 <div class="cards">
   <div class="card"><div class="card-title">Costruire</div>Inserisci i blocchi cliccando sulle frecce del diagramma.</div>
@@ -138,9 +138,9 @@ flusso con blocchi grafici (dichiarazioni, input, output, condizioni, cicli…) 
 
 <section>
 <h2 id="finestra"><span class="num">2</span>La finestra principale</h2>
-<p>All'avvio Flusso mostra un programma vuoto. Questa è la finestra con un programma d'esempio appena eseguito:</p>
+<p>All'avvio Openflow mostra un programma vuoto. Questa è la finestra con un programma d'esempio appena eseguito:</p>
 <div class="annotated">
-  <img src="img/overview.png" alt="La finestra principale di Flusso">
+  <img src="img/overview.png" alt="La finestra principale di Openflow">
   <span class="badge-n" style="left:5.43%;top:7.05%">1</span>
   <span class="badge-n" style="left:27.05%;top:7.05%">2</span>
   <span class="badge-n" style="left:40.82%;top:7.16%">3</span>
@@ -183,7 +183,7 @@ della barra; il bordo tra diagramma e pannelli si trascina per cambiarne la larg
 </div></div>
 <div class="step"><div class="step-n">4</div><div>
   <h3>Controlla il diagramma</h3>
-  <p>Il programma completo è questo. Se un campo è vuoto o un'espressione è sbagliata, Flusso te lo dice subito nella finestra del blocco;
+  <p>Il programma completo è questo. Se un campo è vuoto o un'espressione è sbagliata, Openflow te lo dice subito nella finestra del blocco;
   un blocco lasciato vuoto appare tratteggiato.</p>
   <figure class="narrow"><img src="img/tutorial-chart.png" alt="Il programma "Saluto"."><figcaption>Il programma "Saluto".</figcaption></figure>
 </div></div>
@@ -277,7 +277,7 @@ Da lì puoi continuare con <b>Esegui</b> o con <b>Passo</b>. <b>Programma › Ig
 <b>Rimuovi tutti i breakpoint</b> li elimina.</p>
 <figure class=""><img src="img/breakpoint.png" alt="Il programma in pausa sul breakpoint."><figcaption>Il programma in pausa sul breakpoint.</figcaption></figure>
 <h3>Errori</h3>
-<p>Se qualcosa va storto (divisione per zero, variabile non inizializzata, indice fuori dall'array…) Flusso si ferma,
+<p>Se qualcosa va storto (divisione per zero, variabile non inizializzata, indice fuori dall'array…) Openflow si ferma,
 evidenzia in rosso il blocco responsabile e spiega il problema in italiano.</p>
 <figure class=""><img src="img/error.png" alt="Un errore di esecuzione: il blocco n = 27 / 0 è evidenziato in rosso."><figcaption>Un errore di esecuzione: il blocco <code>n = 27 / 0</code> è evidenziato in rosso.</figcaption></figure>
 </section>
@@ -325,7 +325,7 @@ Trascina la finestra dal titolo e ridimensionala dall'angolo in basso a destra.<
 <p>La <b>tabella di traccia</b> è il modo classico per capire cosa fa un algoritmo: una riga per ogni blocco eseguito, con i valori
 delle variabili e l'esito delle condizioni. Si apre con il pulsante <b>Traccia</b> (<kbd>F7</kbd>) e compare in una scheda accanto al diagramma.</p>
 <h3>1. Scegli cosa tracciare</h3>
-<p>La prima volta Flusso chiede quali <b>variabili</b> seguire (raggruppate per funzione) e quali <b>espressioni o condizioni</b>
+<p>La prima volta Openflow chiede quali <b>variabili</b> seguire (raggruppate per funzione) e quali <b>espressioni o condizioni</b>
 calcolare a ogni passo, per esempio <code>i % 2 == 0</code>. Puoi cambiare la scelta con <b>Scegli valori…</b>.</p>
 <figure class="narrow"><img src="img/trace-setup.png" alt="La scelta dei valori: variabili di Main, la variabile r della funzione Fact e una condizione."><figcaption>La scelta dei valori: variabili di Main, la variabile r della funzione Fact e una condizione.</figcaption></figure>
 <h3>2. Costruiscila passo passo</h3>
@@ -356,7 +356,7 @@ Il nome del file è relativo alla cartella del programma salvato (o a Documenti,
 </section>
 
 <section>
-<h2 id="personalizza"><span class="num">12</span>Personalizzare Flusso</h2>
+<h2 id="personalizza"><span class="num">12</span>Personalizzare Openflow</h2>
 <p>Da <b>Strumenti › Impostazioni</b> scegli lingua (italiano o inglese), schema colori, stile del diagramma, linguaggio
 predefinito per il codice e profondità massima delle chiamate.</p>
 <div class="two">
@@ -406,7 +406,7 @@ Si cambiano al volo anche da <b>Visualizza</b>.</p>
 </dl>
 </section>
 
-<footer>Flusso 1.0.0 · Guida introduttiva</footer>
+<footer>Openflow 1.0.0 · Guida introduttiva</footer>
 </main>
 </div>
 </body>

@@ -1,7 +1,7 @@
 // User-interface and runtime-error text. Italian is the default language.
 
 const it = {
-  appName: 'Flusso',
+  appName: 'Openflow',
   untitled: 'Senza titolo',
   // menus and toolbar
   file: 'File', edit: 'Modifica', program: 'Programma', view: 'Visualizza', tools: 'Strumenti', help: 'Aiuto',
@@ -18,7 +18,7 @@ const it = {
   layoutVariables: 'Diagramma, variabili e console', layoutAll: 'Tutti i pannelli',
   zoomIn: 'Ingrandisci', zoomOut: 'Riduci', zoomReset: 'Zoom 100%',
   colorScheme: 'Schema colori', chartStyle: 'Stile diagramma', language: 'Lingua',
-  settings: 'Impostazioni…', about: 'Informazioni su Flusso', documentation: 'Guida rapida', guide: 'Guida introduttiva',
+  settings: 'Impostazioni…', about: 'Informazioni su Openflow', documentation: 'Guida rapida', guide: 'Guida introduttiva',
   // panels
   enterValue: 'Inserisci un valore e premi Invio', send: 'Invia', clear: 'Pulisci', chatBubbles: 'Fumetti',
   copyAll: 'Copia tutto', saveFile: 'Salva su file…', lineNumbers: 'Numeri di riga', showStack: 'Mostra stack',
@@ -65,7 +65,7 @@ const it = {
   mainProgram: 'Programma principale',
   breakpoint: 'Breakpoint', copied: 'Copiato negli appunti', settingsTitle: 'Impostazioni',
   maxStack: 'Profondità massima delle chiamate', defaultCodeLanguage: 'Linguaggio predefinito per il codice',
-  helpText: `<p><b>Flusso</b> è un ambiente di programmazione visuale: scrivi programmi con diagrammi di flusso.</p>
+  helpText: `<p><b>Openflow</b> è un ambiente di programmazione visuale: scrivi programmi con diagrammi di flusso.</p>
 <ul>
 <li>Fai clic su una <b>freccia</b> del diagramma per inserire un nuovo blocco.</li>
 <li>Fai <b>doppio clic</b> su un blocco per modificarlo; clic destro per tagliare, copiare o eliminare.</li>
@@ -102,7 +102,7 @@ const it = {
 };
 
 const en = {
-  appName: 'Flusso',
+  appName: 'Openflow',
   untitled: 'Untitled',
   file: 'File', edit: 'Edit', program: 'Program', view: 'View', tools: 'Tools', help: 'Help',
   new: 'New', open: 'Open…', save: 'Save', saveAs: 'Save As…', recent: 'Recent', examples: 'Examples', print: 'Print…',
@@ -118,7 +118,7 @@ const en = {
   layoutVariables: 'Chart, variables and console', layoutAll: 'All panels',
   zoomIn: 'Zoom in', zoomOut: 'Zoom out', zoomReset: 'Zoom 100%',
   colorScheme: 'Color scheme', chartStyle: 'Chart style', language: 'Language',
-  settings: 'Settings…', about: 'About Flusso', documentation: 'Quick guide', guide: 'Getting started guide',
+  settings: 'Settings…', about: 'About Openflow', documentation: 'Quick guide', guide: 'Getting started guide',
   enterValue: 'Type a value and press Enter', send: 'Send', clear: 'Clear', chatBubbles: 'Bubbles',
   copyAll: 'Copy all', saveFile: 'Save to file…', lineNumbers: 'Line numbers', showStack: 'Show stack',
   uninitialized: '(uninitialized)', parameters: 'Parameters',
@@ -161,7 +161,7 @@ const en = {
   mainProgram: 'Main program',
   breakpoint: 'Breakpoint', copied: 'Copied to clipboard', settingsTitle: 'Settings',
   maxStack: 'Maximum call depth', defaultCodeLanguage: 'Default code language',
-  helpText: `<p><b>Flusso</b> is a visual programming environment: you write programs as flowcharts.</p>
+  helpText: `<p><b>Openflow</b> is a visual programming environment: you write programs as flowcharts.</p>
 <ul>
 <li>Click an <b>arrow</b> in the chart to insert a new shape.</li>
 <li><b>Double-click</b> a shape to edit it; right-click to cut, copy or delete.</li>
