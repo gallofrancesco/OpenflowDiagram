@@ -14,6 +14,7 @@ const PAD_X = 30;        // horizontal padding inside a shape
 const MIN_W = 90;
 const BRANCH_GAP = 36;   // space between the two sides of an If
 const LOOP_GAP = 26;     // distance of loop-back lines from the body
+const NEWLINE_MARK_W = 24; // extra width of Output shapes for the ↵ / → marker
 const FONT_FAMILY = '"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif';
 const FONT = `${FONT_SIZE}px ${FONT_FAMILY}`;
 
@@ -45,6 +46,8 @@ function layoutStatement(s, style) {
   const geom = style.shapes[s.kind] || 'rect';
   const text = caption(s, style.verbose);
   const size = shapeSize(text, geom);
+  // Output shapes get room for the newline marker (↵ new line, → same line).
+  if (s.kind === 'output') size.w += NEWLINE_MARK_W;
   const shape = { s, geom, ...size };
 
   if (s.kind === 'if') {
@@ -208,6 +211,16 @@ export function shapeIcon(kind, label, scheme, style, w = 112, h = 38) {
     + `<text x="${W / 2}" y="${pad + h / 2 + 5}" fill="${col.text}" stroke="none" text-anchor="middle" font-size="14" font-family='${FONT_FAMILY}'>${esc(label)}</text></g></svg>`;
 }
 
+// Small filled badge inside Output shapes: ↵ (goes to a new line) or → (stays on the same line).
+function newlineBadge(cx, cy, newline, color) {
+  const d = newline
+    ? `M${cx + 5},${cy - 6} V${cy + 2} H${cx - 5} M${cx - 1.5},${cy - 1.5} L${cx - 5},${cy + 2} L${cx - 1.5},${cy + 5.5}`
+    : `M${cx - 6},${cy} H${cx + 6} M${cx + 2.5},${cy - 3.5} L${cx + 6},${cy} L${cx + 2.5},${cy + 3.5}`;
+  return `<g stroke="none"><title>${esc(newline ? t('newline') : t('noNewline'))}</title>`
+    + `<rect x="${cx - 10}" y="${cy - 10}" width="20" height="20" rx="5" fill="${color}"/>`
+    + `<path d="${d}" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>`;
+}
+
 function arrowHead(pts, color) {
   const [x2, y2] = pts[pts.length - 1];
   const [x1, y1] = pts[pts.length - 2];
@@ -260,9 +273,12 @@ export function renderSvg(layout, options) {
     const lines = sh.lines;
     const textColor = incomplete ? scheme.label : col.text;
     const ty = sh.y + sh.h / 2 - ((lines.length - 1) * LINE_H) / 2 + 5.5;
+    const isOutput = !sh.terminal && sh.s.kind === 'output';
+    const tx = isOutput ? sh.x - NEWLINE_MARK_W / 2 : sh.x;
     lines.forEach((line, i) => {
-      parts.push(`<text x="${sh.x}" y="${ty + i * LINE_H}" fill="${textColor}" stroke="none" text-anchor="middle">${esc(line)}</text>`);
+      parts.push(`<text x="${tx}" y="${ty + i * LINE_H}" fill="${textColor}" stroke="none" text-anchor="middle">${esc(line)}</text>`);
     });
+    if (isOutput) parts.push(newlineBadge(sh.x + sh.w / 2 - NEWLINE_MARK_W / 2 - 10, sh.y + sh.h / 2, sh.s.newline, col.border));
     parts.push('</g>');
   }
 

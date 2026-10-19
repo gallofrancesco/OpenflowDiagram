@@ -57,7 +57,7 @@ const SHAPES = [
   ['declare', 'Crea una o più variabili di un tipo (Integer, Real, String, Boolean), anche come array.', 'Integer n, i  ·  Real Array voti[10]'],
   ['assign', 'Calcola un\'espressione e ne mette il risultato in una variabile.', 'somma = somma + x'],
   ['input', 'Chiede un valore all\'utente nella Console e lo salva in una variabile.', 'Input nome'],
-  ['output', 'Mostra un valore o un testo nella Console (con o senza "a capo").', 'Output "Ciao, " & nome'],
+  ['output', 'Mostra un valore o un testo nella Console. Il simbolo nel blocco indica se poi <b>va a capo</b> (<span class="nl">↵</span>) o se il prossimo output <b>continua sulla stessa riga</b> (<span class="nl">→</span>).', 'Output "Ciao, " & nome'],
   ['if', 'Sceglie tra due rami in base a una condizione: Vero a destra, Falso a sinistra.', 'Se voto >= 6'],
   ['call', 'Esegue una funzione che non restituisce valori.', 'Ordina(v)'],
   ['while', 'Ripete il corpo finché la condizione è vera (controllo all\'inizio).', 'Mentre n != 1'],
@@ -163,6 +163,7 @@ ${sec('primo')}
   Poi, sotto, un blocco <b>Input</b> con la variabile <code>nome</code>, e infine un altro <b>Output</b> con
   <code>"Ciao, " &amp; nome &amp; "!"</code> — il simbolo <code>&amp;</code> unisce testi e valori.</p>
   ${fig('tutorial-output', 'La finestra del blocco Output: l\'opzione "Vai a capo" è attiva di default.', 'narrow')}
+  ${tip('Nel diagramma ogni Output mostra <span class="nl">↵</span> se va a capo e <span class="nl">→</span> se il testo successivo continua sulla stessa riga: utile per stampare più valori uno accanto all\'altro.')}
 </div></div>
 <div class="step"><div class="step-n">4</div><div>
   <h3>Controlla il diagramma</h3>
@@ -451,6 +452,7 @@ table.shapes td.icon svg { display: block; }
 .b-Integer { background: #e6f1ff; color: #0060d1; } .b-Real { background: #f5e9fb; color: #8e3cb5; }
 .b-String { background: #fff1e0; color: #b35c00; } .b-Boolean { background: #e5f7ea; color: #1e8a3c; }
 .pill.yes { background: #e5f7ea; color: #1e8a3c; } .pill.no { background: #ffeceb; color: #d70015; }
+.nl { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 5px; background: #34c759; color: #fff; font-weight: 700; font-size: 13px; vertical-align: -3px; }
 ul.checks { padding-left: 0; list-style: none; }
 ul.checks li { position: relative; padding-left: 28px; margin: 8px 0; }
 ul.checks li::before { content: "✓"; position: absolute; left: 4px; color: var(--primary); font-weight: 700; }

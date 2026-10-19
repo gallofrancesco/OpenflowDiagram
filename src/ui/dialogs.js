@@ -156,7 +156,16 @@ export async function editStatement(s) {
     case 'output': {
       const e = textInput(s.expression);
       const nl = h('input', { type: 'checkbox', checked: s.newline });
-      body.append(field(t('expression'), e, '"Testo" & variabile'), h('label', { class: 'check' }, nl, t('newline')));
+      // The same marker drawn in the chart (↵ new line, → same line), updated live.
+      const mark = h('span', { class: 'nl-mark' });
+      const hint = h('span', { class: 'muted' });
+      const sync = () => {
+        mark.textContent = nl.checked ? '↵' : '→';
+        hint.textContent = nl.checked ? '' : `(${t('noNewline').toLowerCase()})`;
+      };
+      nl.addEventListener('change', sync);
+      sync();
+      body.append(field(t('expression'), e, '"Testo" & variabile'), h('label', { class: 'check' }, nl, t('newline'), mark, hint));
       read = () => ({ expression: e.value.trim(), newline: nl.checked });
       checks = x => [syntaxCheck(x.expression, t('expression'))];
       break;
