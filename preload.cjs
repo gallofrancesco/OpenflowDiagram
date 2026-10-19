@@ -18,6 +18,7 @@ contextBridge.exposeInMainWorld('openflowDiagram', {
   openDialog: opts => ipcRenderer.invoke('dialog:open', opts),
   saveDialog: opts => ipcRenderer.invoke('dialog:save', opts),
   readTextFileSync: p => fs.readFileSync(p, 'utf8'),
+  fileExists: p => fs.existsSync(p),
   writeTextFileSync: (p, text) => fs.writeFileSync(p, text, 'utf8'),
   writeBinaryFileSync: (p, base64) => fs.writeFileSync(p, Buffer.from(base64, 'base64')),
   basename: p => path.basename(p),

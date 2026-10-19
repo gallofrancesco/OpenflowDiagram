@@ -142,16 +142,16 @@ flusso con blocchi grafici (dichiarazioni, input, output, condizioni, cicli…) 
 <p>All'avvio OpenflowDiagram mostra un programma vuoto. Questa è la finestra con un programma d'esempio appena eseguito:</p>
 <div class="annotated">
   <img src="img/overview.png" alt="La finestra principale di OpenflowDiagram">
-  <span class="badge-n" style="left:5.43%;top:7.05%">1</span>
-  <span class="badge-n" style="left:27.05%;top:7.05%">2</span>
-  <span class="badge-n" style="left:40.82%;top:7.16%">3</span>
-  <span class="badge-n" style="left:51.67%;top:7.16%">4</span>
-  <span class="badge-n" style="left:29.29%;top:10.80%">5</span>
-  <span class="badge-n" style="left:4.21%;top:18.41%">6</span>
-  <span class="badge-n" style="left:68.86%;top:29.45%">7</span>
-  <span class="badge-n" style="left:68.86%;top:73.79%">8</span>
-  <span class="badge-n" style="left:88.52%;top:7.05%">9</span>
-  <span class="badge-n" style="left:95.74%;top:7.05%">10</span>
+  <span class="badge-n" style="left:4.71%;top:6.82%">1</span>
+  <span class="badge-n" style="left:23.91%;top:6.82%">2</span>
+  <span class="badge-n" style="left:36.28%;top:6.93%">3</span>
+  <span class="badge-n" style="left:44.96%;top:6.93%">4</span>
+  <span class="badge-n" style="left:29.29%;top:10.34%">5</span>
+  <span class="badge-n" style="left:4.21%;top:17.95%">6</span>
+  <span class="badge-n" style="left:68.86%;top:29.11%">7</span>
+  <span class="badge-n" style="left:68.86%;top:73.68%">8</span>
+  <span class="badge-n" style="left:94.79%;top:6.82%">9</span>
+  <span class="badge-n" style="left:97.93%;top:6.82%">10</span>
 </div>
 <ol class="legend"><li>File: nuovo, apri, salva</li><li>Esegui, Passo, Pausa, Ferma</li><li>Velocità di esecuzione</li><li>Funzione mostrata nel diagramma</li><li>Schede Diagramma e Tabella di traccia</li><li>Il diagramma di flusso</li><li>Console: output e input</li><li>Variabili e loro valori</li><li>Tabella di traccia</li><li>Finestra del codice sorgente</li></ol>
 <p>La <b>barra dei menu</b> (File, Modifica, Programma, Visualizza, Strumenti, Aiuto) contiene tutti i comandi, anche quelli
@@ -347,6 +347,15 @@ le condizioni mostrano <span class="pill yes">Vero</span> o <span class="pill no
 Il nome del file è relativo alla cartella del programma salvato (o a Documenti, se il programma non è ancora salvato).
 <code>EOF()</code> dice quando il file è finito.</p>
 <figure class=""><img src="img/files.png" alt="L'esempio "File" scrive i quadrati da 1 a 25 e poi li rilegge sommandoli."><figcaption>L'esempio "File" scrive i quadrati da 1 a 25 e poi li rilegge sommandoli.</figcaption></figure>
+<h3>Vedere il contenuto dei file</h3>
+<p>Il pulsante <b>File</b> della barra apre il pannello omonimo, che mostra il contenuto dei file usati dal programma (quelli
+nominati nei blocchi <b>Apri file</b>). Si aggiorna mentre il programma gira, anche passo passo:</p>
+<ul class="checks">
+  <li>in <b>lettura</b>, le righe già lette sono attenuate e la <b>prossima riga da leggere</b> è evidenziata;</li>
+  <li>in <b>scrittura</b>, le righe compaiono man mano che vengono scritte (su disco vengono salvate alla chiusura del file);</li>
+  <li>a programma fermo mostra il file com'è sul disco. Con <b>Apri…</b> puoi vedere anche qualsiasi altro file di testo, per esempio per controllare i dati da leggere.</li>
+</ul>
+<figure class=""><img src="img/file-viewer.png" alt="Passo passo nell'esempio "File": le prime due righe sono già state lette (ora x vale 4) e nel pannello File è evidenziata la terza, la prossima che Leggi file leggerà."><figcaption>Passo passo nell'esempio "File": le prime due righe sono già state lette (ora <code>x</code> vale 4) e nel pannello File è evidenziata la terza, la prossima che <b>Leggi file</b> leggerà.</figcaption></figure>
 <h3>Salvare, aprire, esportare</h3>
 <ul class="checks">
   <li><b>File › Salva / Apri</b>: programmi in formato <code>.fprg</code>; puoi anche trascinare un file sulla finestra.</li>

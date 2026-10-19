@@ -313,6 +313,15 @@ ${sec('file')}
 Il nome del file è relativo alla cartella del programma salvato (o a Documenti, se il programma non è ancora salvato).
 <code>EOF()</code> dice quando il file è finito.</p>
 ${fig('files', 'L\'esempio "File" scrive i quadrati da 1 a 25 e poi li rilegge sommandoli.')}
+<h3>Vedere il contenuto dei file</h3>
+<p>Il pulsante <b>File</b> della barra apre il pannello omonimo, che mostra il contenuto dei file usati dal programma (quelli
+nominati nei blocchi <b>Apri file</b>). Si aggiorna mentre il programma gira, anche passo passo:</p>
+<ul class="checks">
+  <li>in <b>lettura</b>, le righe già lette sono attenuate e la <b>prossima riga da leggere</b> è evidenziata;</li>
+  <li>in <b>scrittura</b>, le righe compaiono man mano che vengono scritte (su disco vengono salvate alla chiusura del file);</li>
+  <li>a programma fermo mostra il file com'è sul disco. Con <b>Apri…</b> puoi vedere anche qualsiasi altro file di testo, per esempio per controllare i dati da leggere.</li>
+</ul>
+${fig('file-viewer', 'Passo passo nell\'esempio "File": le prime due righe sono già state lette (ora <code>x</code> vale 4) e nel pannello File è evidenziata la terza, la prossima che <b>Leggi file</b> leggerà.')}
 <h3>Salvare, aprire, esportare</h3>
 <ul class="checks">
   <li><b>File › Salva / Apri</b>: programmi in formato <code>.fprg</code>; puoi anche trascinare un file sulla finestra.</li>

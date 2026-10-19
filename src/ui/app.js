@@ -4,8 +4,8 @@ import {
   cloneStatements, statementsToXml, statementsFromXml, walkStatements, BLOCKS,
 } from '../core/model.js';
 import { Interpreter } from '../core/interpreter.js';
-import { FlowError } from '../core/expr.js';
-import { t, setLanguage, messages } from '../core/i18n.js';
+import { FlowError, parseExpression } from '../core/expr.js';
+import { t, setLanguage, messages, plural } from '../core/i18n.js';
 import { startKey, endKey } from '../core/codegen/common.js';
 import { layoutFunction, renderSvg, shapeIcon } from './chart.js';
 import { COLOR_SCHEMES, CHART_STYLES, caption } from './schemes.js';
@@ -15,7 +15,7 @@ import {
 } from './dialogs.js';
 import { TraceRecorder } from '../core/trace.js';
 import { renderTraceTable, traceToSvg } from './trace.js';
-import { ConsolePanel, VariablesPanel, CodePanel } from './panels.js';
+import { ConsolePanel, VariablesPanel, CodePanel, FilePanel } from './panels.js';
 
 const api = window.openflowDiagram;
 const $ = sel => document.querySelector(sel);
@@ -25,7 +25,7 @@ const $ = sel => document.querySelector(sel);
 const DEFAULT_SETTINGS = {
   settingsVersion: 2, lang: 'it', scheme: 'system', style: 'standard', codeLang: 'cpp', codeOpen: false, speed: 'medium',
   ignoreBreakpoints: false, maxStack: 1000, zoom: 1, recent: [],
-  panels: { console: true, variables: true },
+  panels: { console: true, variables: true, files: false },
   chat: true, lineNumbers: true, traceOnlyChanges: false, showStack: false, sideWidth: 420,
 };
 
@@ -99,7 +99,82 @@ function restore(snap) {
 
 /* ---------- panels ---------- */
 
-let consolePanel, varsPanel, codePanel;
+let consolePanel, varsPanel, codePanel, filePanel;
+
+/* ---------- file viewer ---------- */
+
+// Files listed in the viewer: named by the program (key "name:<file>") or opened by hand ("path:<absolute>").
+const fileView = { current: null, runtime: new Set(), extra: [] };
+
+// Relative file names are resolved like the interpreter does: next to the saved program, or in Documents.
+const fileBase = () => (state.filePath ? api.dirname(state.filePath) : api.documentsDir());
+
+function programFileNames() {
+  const names = [];
+  for (const f of state.program.functions) {
+    for (const s of walkStatements(f.body)) {
+      if (s.kind !== 'open') continue;
+      try {
+        const ast = parseExpression(s.expression);
+        if (ast.k === 'lit' && ast.type === 'String' && ast.value.trim()) names.push(ast.value);
+      } catch { /* incomplete expression: nothing to show */ }
+    }
+  }
+  return names;
+}
+
+function knownFiles() {
+  const list = [], seen = new Set();
+  const add = (key, label) => {
+    if (seen.has(key)) return;
+    seen.add(key);
+    list.push({ key, label });
+  };
+  for (const n of [...programFileNames(), ...fileView.runtime]) add(`name:${n}`, n);
+  for (const p of fileView.extra) add(`path:${p}`, api.basename(p));
+  return list;
+}
+
+function currentFileView() {
+  const key = fileView.current;
+  if (!key) return null;
+  const name = key.slice(5);
+  const path = key.startsWith('path:') ? name : api.resolve(fileBase(), name);
+  // While the program has this file open, show the interpreter's live state.
+  const open = runner.interp?.file;
+  if (runner.active && open && api.resolve(fileBase(), open.name) === path) {
+    return { name, path, state: open.mode === 'read' ? 'read' : 'write', lines: open.lines, pos: open.pos ?? 0 };
+  }
+  try {
+    const lines = api.readTextFileSync(path).replace(/\r\n?/g, '\n').split('\n');
+    if (lines.length && lines[lines.length - 1] === '') lines.pop();
+    return { name, path, state: 'disk', lines };
+  } catch {
+    return { name, path, state: api.fileExists(path) ? 'error' : 'missing', lines: [] };
+  }
+}
+
+function updateFiles() {
+  if (!settings.panels.files || !filePanel) return;
+  const open = runner.interp?.file;
+  if (runner.active && open && !fileView.runtime.has(open.name)) {
+    fileView.runtime.add(open.name);
+    fileView.current = `name:${open.name}`; // follow the file the program just opened
+  }
+  const list = knownFiles();
+  if (!list.some(x => x.key === fileView.current)) fileView.current = list[0]?.key ?? null;
+  filePanel.setFiles(list, fileView.current);
+  filePanel.render(currentFileView());
+}
+
+async function openOtherFile() {
+  const res = await api.openDialog({ filters: [{ name: 'Testo', extensions: ['txt', 'csv', 'dat'] }] });
+  if (!res) return;
+  if (!fileView.extra.includes(res.path)) fileView.extra.push(res.path);
+  fileView.current = `path:${res.path}`;
+  if (!settings.panels.files) togglePanel('files', true);
+  updateFiles();
+}
 
 function setupPanels() {
   const panel = (key, title, tools) => {
@@ -124,6 +199,11 @@ function setupPanels() {
     toolBtn(t('showStack'), e => { settings.showStack = !settings.showStack; varsPanel.showStack = settings.showStack; e.target.classList.toggle('on', settings.showStack); runner.updateWatch(); saveSettings(); }, { class: `small${settings.showStack ? ' on' : ''}` }),
   ]));
   varsPanel.showStack = settings.showStack;
+
+  filePanel = new FilePanel(panel('files', t('filesPanel'), () => [
+    toolBtn(t('fileRefresh'), () => updateFiles()),
+    toolBtn(t('fileOpenOther'), openOtherFile),
+  ]), { onSelect: key => { fileView.current = key; updateFiles(); } });
 
   setupCodeWindow(toolBtn);
   applyPanels();
@@ -200,13 +280,14 @@ function applyPanels() {
   $('#side').style.width = `${settings.sideWidth}px`;
   for (const b of document.querySelectorAll('[data-toggle-panel]')) b.classList.toggle('on', !!settings.panels[b.dataset.togglePanel]);
   updateCode();
+  updateFiles();
 }
 
 const LAYOUTS = {
   layoutChart: {},
   layoutConsole: { console: true },
   layoutVariables: { variables: true, console: true },
-  layoutAll: { console: true, variables: true },
+  layoutAll: { console: true, variables: true, files: true },
 };
 
 function applyLayout(name) {
@@ -259,6 +340,7 @@ function refresh() {
   refreshFunctionList();
   renderChart();
   updateCode();
+  updateFiles();
   updateTitle();
   updateToolbar();
 }
@@ -657,7 +739,7 @@ function renderTrace(force = false) {
   } else {
     renderTraceTable(scroll, trace, state.program, { onlyChanges: settings.traceOnlyChanges });
   }
-  $('#trace-count').textContent = trace?.rows.length ? t('traceRows', { n: trace.rows.length }) : '';
+  $('#trace-count').textContent = trace?.rows.length ? plural(trace.rows.length, 'traceRow', 'traceRows') : '';
   $('#trace-export').disabled = !trace?.rows.length || runner.active;
 }
 
@@ -778,6 +860,7 @@ class Runner {
     renderChart();
     updateCode();
     renderTrace(true);
+    updateFiles();
     updateToolbar();
     status(t('ready'));
   }
@@ -879,6 +962,7 @@ class Runner {
     updateCode();
     this.updateWatch();
     renderTrace();
+    updateFiles();
   }
 
   updateWatch() {
@@ -935,6 +1019,7 @@ function loadProgram(program, path) {
   state.traceConfig = null;
   trace = null;
   renderTrace(true);
+  Object.assign(fileView, { current: null, runtime: new Set(), extra: [] });
   refresh();
 }
 
@@ -1133,7 +1218,7 @@ const commands = {
 };
 
 for (const name of Object.keys(LAYOUTS)) commands[name] = () => applyLayout(name);
-for (const p of ['console', 'variables']) commands[`panel_${p}`] = () => togglePanel(p);
+for (const p of ['console', 'variables', 'files']) commands[`panel_${p}`] = () => togglePanel(p);
 for (const s of Object.keys(SPEEDS)) {
   commands[`speed_${s}`] = () => {
     settings.speed = s;
@@ -1195,6 +1280,7 @@ const ICONS = {
   console: 'M5 4.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H10l-5 4v-4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z',
   variables: 'M4 5.5h16v13H4zM4 10h16M10 5.5v13',
   code: 'M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4.5l-3 15',
+  file: 'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M8.5 12.5h7M8.5 16.5h7',
   chart: 'M9 3.5h6v4H9zM12 7.5v3M7 10.5h10l-2 4H9zM12 14.5v3M9 17.5h6v3H9z',
   trace: 'M3.5 5h17v14h-17zM3.5 9.5h17M3.5 14h17M9 5v14M14.5 5v14',
 };
@@ -1235,6 +1321,7 @@ function buildMenu() {
     { label: t('view'), submenu: [
       { id: 'panel_console', label: t('console'), type: 'checkbox', checked: settings.panels.console },
       { id: 'panel_variables', label: t('variables'), type: 'checkbox', checked: settings.panels.variables },
+      { id: 'panel_files', label: t('filesPanel'), type: 'checkbox', checked: settings.panels.files },
       { type: 'separator' },
       { id: 'toggleCode', label: t('sourceCode'), accelerator: accel('toggleCode'), type: 'checkbox', checked: settings.codeOpen },
       { id: 'traceTable', label: t('traceTable'), accelerator: accel('traceTable') },
@@ -1287,7 +1374,7 @@ function setupToolbar() {
     group(btn('addFunction', 'add', t('addFunction').replace('…', ''), true), funcBtn),
     group(btn('zoomOut', 'zoomOut', t('zoomOut'), true), btn('zoomIn', 'zoomIn', t('zoomIn'), true)),
     h('span', { class: 'spacer' }),
-    group(panelBtn('console', 'console', t('console')), panelBtn('variables', 'variables', t('variables'))),
+    group(panelBtn('console', 'console', t('console')), panelBtn('variables', 'variables', t('variables')), panelBtn('files', 'file', t('filesPanel'))),
     traceBtn,
     codeBtn,
   );

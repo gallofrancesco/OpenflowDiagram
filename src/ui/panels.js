@@ -1,5 +1,5 @@
-// Side panels: console, variable watch and source code viewer.
-import { t } from '../core/i18n.js';
+// Side panels: console, variable watch, file viewer and source code viewer.
+import { t, plural } from '../core/i18n.js';
 import { GENERATORS, generateCode, generatorFor } from '../core/codegen/index.js';
 import { h } from './dialogs.js';
 
@@ -193,5 +193,75 @@ export class CodePanel {
 
   get extension() {
     return generatorFor(this.lang).extension;
+  }
+}
+
+/* ---------- file viewer ---------- */
+
+const MAX_FILE_LINES = 5000;
+
+/*
+ Shows the text files a program works with.
+ view = { name, path, state: 'read' | 'write' | 'disk' | 'missing' | 'error', lines, pos }
+ - read:  the file is open for reading; lines before pos were already read, pos is the next one
+ - write: the file is open for writing; lines are what has been written so far (saved on Close)
+ - disk:  the file as it is on disk
+*/
+export class FilePanel {
+  constructor(root, { onSelect }) {
+    this.select = h('select', { 'aria-label': t('filesPanel') });
+    this.select.addEventListener('change', () => onSelect(this.select.value));
+    this.info = h('div', { class: 'file-info' });
+    this.view = h('div', { class: 'file-view', tabindex: '0' });
+    root.append(h('div', { class: 'file-bar' }, this.select), this.info, this.view);
+  }
+
+  // names: [{ key, label }]; current: key of the shown file.
+  setFiles(names, current) {
+    this.select.replaceChildren(...names.map(n => h('option', { value: n.key }, n.label)));
+    this.select.value = current ?? '';
+    this.select.disabled = !names.length;
+  }
+
+  render(view) {
+    if (!view) {
+      this.info.replaceChildren();
+      this.view.replaceChildren(h('p', { class: 'muted file-empty' }, t('fileViewerEmpty')));
+      return;
+    }
+    const lines = view.lines || [];
+    const status = {
+      read: view.pos >= lines.length ? t('fileStateReadEnd') : t('fileStateRead', { n: view.pos + 1 }),
+      write: t('fileStateWrite', { rows: plural(lines.length, 'oneLine', 'nLines') }),
+      disk: t('fileStateDisk', { rows: plural(lines.length, 'oneLine', 'nLines') }),
+      missing: t('fileMissing'),
+      error: t('fileError'),
+    }[view.state];
+    this.info.replaceChildren(
+      h('div', { class: 'file-path', title: view.path }, view.path),
+      h('span', { class: `pill file-state ${view.state}` }, status));
+    if (view.state === 'missing' || view.state === 'error') {
+      this.view.replaceChildren();
+      return;
+    }
+    if (!lines.length) {
+      this.view.replaceChildren(h('p', { class: 'muted file-empty' }, t('fileEmpty')));
+      return;
+    }
+    const width = String(Math.min(lines.length, MAX_FILE_LINES)).length;
+    let current = null;
+    const rows = lines.slice(0, MAX_FILE_LINES).map((text, i) => {
+      let cls = 'file-line';
+      if (view.state === 'read' && i < view.pos) cls += ' done';
+      if (view.state === 'read' && i === view.pos) cls += ' next';
+      if (view.state === 'write' && i === lines.length - 1) cls += ' next';
+      const row = h('div', { class: cls },
+        h('span', { class: 'ln' }, String(i + 1).padStart(width, ' ')), h('span', { class: 'src' }, text, '​'));
+      if (cls.includes('next')) current = row;
+      return row;
+    });
+    if (lines.length > MAX_FILE_LINES) rows.push(h('p', { class: 'muted file-empty' }, t('fileTruncated', { n: MAX_FILE_LINES })));
+    this.view.replaceChildren(...rows);
+    current?.scrollIntoView({ block: 'nearest' });
   }
 }

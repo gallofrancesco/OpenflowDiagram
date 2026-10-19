@@ -32,13 +32,21 @@ const it = {
   shape_close: 'Chiudi file', shape_read: 'Leggi file', shape_write: 'Scrivi file',
   groupBasic: 'Blocchi', groupLoops: 'Cicli', groupOther: 'Altro', groupFiles: 'File',
   // trace table
+  // file viewer
+  filesPanel: 'File', fileRefresh: 'Aggiorna', fileOpenOther: 'Apri…',
+  fileViewerEmpty: 'Il programma non usa file. Qui compare il contenuto dei file usati dai blocchi Apri file, Leggi file e Scrivi file; con «Apri…» puoi vedere qualsiasi file di testo.',
+  fileStateRead: 'Aperto in lettura · prossima riga: {n}', fileStateReadEnd: 'Aperto in lettura · fine del file',
+  fileStateWrite: 'Aperto in scrittura · {rows} (salvataggio alla chiusura)', fileStateDisk: 'Su disco · {rows}',
+  oneLine: '1 riga', nLines: '{n} righe',
+  fileMissing: 'Il file non esiste ancora: verrà creato quando il programma lo apre in scrittura.',
+  fileError: 'Impossibile leggere il file.', fileEmpty: '(file vuoto)', fileTruncated: 'Mostrate solo le prime {n} righe.',
   chartTab: 'Diagramma', traceTable: 'Tabella di traccia', traceShort: 'Traccia', codeShort: 'Codice', traceChoose: 'Scegli valori…', traceTitle: 'Valori da tracciare',
   traceVariables: 'Variabili', traceExpressions: 'Espressioni e condizioni', traceExprHint: 'Esempi: i * 2   ·   n > 0   ·   x % 2 == 0   ·   Len(nome)',
   traceAddExpr: 'Aggiungi espressione', traceOutputCol: 'Mostra la colonna Output', traceOnlyChanges: 'Solo righe con cambiamenti',
   traceExportPng: 'Esporta PNG', traceEmpty: 'Premi Esegui o Passo: la tabella si riempie mentre il programma viene eseguito.',
   traceNotConfigured: 'Scegli le variabili e le condizioni da seguire per costruire la tabella di traccia.',
   traceStep: '#', traceFunction: 'Funzione', traceBlock: 'Blocco', traceResult: 'Esito', traceOutput: 'Output',
-  traceLimit: 'Raggiunto il limite di {n} righe: la registrazione si è fermata.', traceRows: '{n} righe',
+  traceLimit: 'Raggiunto il limite di {n} righe: la registrazione si è fermata.', traceRow: '1 riga', traceRows: '{n} righe',
   traceNoUserCalls: 'Le espressioni tracciate non possono chiamare funzioni del programma.',
   traceNothing: 'Scegli almeno una variabile o un\'espressione da tracciare.', traceIn: 'in',
   start: 'Inizio', end: 'Fine', main: 'Main', returnWord: 'Restituisci', trueWord: 'Vero', falseWord: 'Falso',
@@ -129,13 +137,20 @@ const en = {
   shape_comment: 'Comment', shape_breakpoint: 'Breakpoint', shape_open: 'Open file',
   shape_close: 'Close file', shape_read: 'Read file', shape_write: 'Write file',
   groupBasic: 'Shapes', groupLoops: 'Loops', groupOther: 'Other', groupFiles: 'Files',
+  filesPanel: 'Files', fileRefresh: 'Refresh', fileOpenOther: 'Open…',
+  fileViewerEmpty: 'The program uses no files. This panel shows the files used by the Open file, Read file and Write file shapes; with "Open…" you can view any text file.',
+  fileStateRead: 'Open for reading · next line: {n}', fileStateReadEnd: 'Open for reading · end of file',
+  fileStateWrite: 'Open for writing · {rows} (saved on close)', fileStateDisk: 'On disk · {rows}',
+  oneLine: '1 line', nLines: '{n} lines',
+  fileMissing: 'The file does not exist yet: it will be created when the program opens it for writing.',
+  fileError: 'Cannot read the file.', fileEmpty: '(empty file)', fileTruncated: 'Only the first {n} lines are shown.',
   chartTab: 'Flowchart', traceTable: 'Trace table', traceShort: 'Trace', codeShort: 'Code', traceChoose: 'Choose values…', traceTitle: 'Values to trace',
   traceVariables: 'Variables', traceExpressions: 'Expressions and conditions', traceExprHint: 'Examples: i * 2   ·   n > 0   ·   x % 2 == 0   ·   Len(name)',
   traceAddExpr: 'Add expression', traceOutputCol: 'Show the Output column', traceOnlyChanges: 'Only rows with changes',
   traceExportPng: 'Export PNG', traceEmpty: 'Press Run or Step: the table fills in while the program runs.',
   traceNotConfigured: 'Choose the variables and conditions to follow to build the trace table.',
   traceStep: '#', traceFunction: 'Function', traceBlock: 'Shape', traceResult: 'Result', traceOutput: 'Output',
-  traceLimit: 'Reached the limit of {n} rows: recording stopped.', traceRows: '{n} rows',
+  traceLimit: 'Reached the limit of {n} rows: recording stopped.', traceRow: '1 row', traceRows: '{n} rows',
   traceNoUserCalls: 'Traced expressions cannot call program functions.',
   traceNothing: 'Choose at least one variable or expression to trace.', traceIn: 'in',
   start: 'Start', end: 'End', main: 'Main', returnWord: 'Return', trueWord: 'True', falseWord: 'False',
@@ -207,6 +222,11 @@ export function setLanguage(code) {
 export function t(key, params = {}) {
   const s = current[key] ?? en[key] ?? key;
   return s.replace(/\{(\w+)\}/g, (m, k) => (k in params ? String(params[k]) : m));
+}
+
+// Singular/plural: plural(1, 'oneLine', 'nLines') → "1 riga", plural(5, ...) → "5 righe".
+export function plural(n, oneKey, manyKey) {
+  return n === 1 ? t(oneKey) : t(manyKey, { n });
 }
 
 export function messages() {

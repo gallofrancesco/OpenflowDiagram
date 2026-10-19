@@ -292,6 +292,19 @@ const SCENARIOS = {
     commands: ['scheme_vibrant', 'style_classic', 'zoomOut', 'zoomOut'],
     script: async () => ({ cropSelector: '#chart-scroll', cropPad: 0 }),
   },
+  'file-viewer': {
+    program: tempCopy('File'),
+    script: async () => {
+      click($('[data-toggle-panel=files]'));
+      await wait(200);
+      for (let i = 0; i < 120 && !($('.file-state')?.textContent || '').includes(': 3'); i++) {
+        click($('[data-cmd=step]'));
+        await wait(70);
+      }
+      await wait(200);
+      return {};
+    },
+  },
   files: {
     // A copy in a temp folder: the program writes its data file next to the .fprg it was opened from.
     program: tempCopy('File'),

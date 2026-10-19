@@ -130,7 +130,7 @@ input[type=checkbox], input[type=radio] { width: 17px; height: 17px; accent-colo
 #func-select { min-width: 150px; font-weight: 500; }
 .tool.icon-only .lbl { display: none; }
 /* Small laptop screens (14"): keep the toolbar on one line. */
-@media (max-width: 1320px) {
+@media (max-width: 1500px) {
   #toolbar { gap: 6px; padding: 7px 10px; }
   .tool { padding: 5px 9px; }
   .tool.toggle .lbl, .tool[data-cmd="manageFunctions"] .lbl { display: none; }
@@ -283,6 +283,26 @@ body.running #chart .gap { cursor: default; }
 .cell { background: #f2f2f7; border: 1px solid var(--border-light); border-radius: 6px; padding: 1px 8px; }
 .cell sub { color: var(--muted); margin-right: 4px; }
 .t-Integer { color: #0a6cff; } .t-Real { color: #a145cc; } .t-String { color: #c25e00; } .t-Boolean { color: #23913f; }
+
+/* file viewer */
+.panel[data-panel="files"] { flex: 1.4; }
+.panel[data-panel="files"] .panel-body { display: flex; flex-direction: column; overflow: hidden; }
+.file-bar { padding: 10px 14px 0; }
+.file-bar select { width: 100%; font-family: var(--mono); font-size: 14px; }
+.file-info { display: flex; flex-direction: column; gap: 6px; padding: 8px 14px 10px; border-bottom: 1px solid var(--border-light); }
+.file-info:empty { display: none; }
+.file-path { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: rtl; text-align: left; }
+.file-state { align-self: flex-start; font-weight: 600; }
+.file-state.read { background: var(--primary-subtle); color: #0060d1; }
+.file-state.write { background: #fff1e0; color: #b35c00; }
+.file-state.disk { background: #f2f2f7; color: var(--text-2); }
+.file-state.missing, .file-state.error { background: #ffeceb; color: #d70015; white-space: normal; }
+.file-view { flex: 1; overflow: auto; padding: 6px 0; font: 14px/1.6 var(--mono); }
+.file-empty { padding: 4px 14px; font-family: var(--font); }
+.file-line { display: flex; white-space: pre; padding-right: 12px; }
+.file-line .ln { color: #aeaeb2; padding: 0 12px 0 12px; user-select: none; text-align: right; }
+.file-line.done .src { color: #aeaeb2; }
+.file-line.next { background: var(--hl); box-shadow: inset 3px 0 0 var(--warning); }
 
 /* floating source-code window (card with shadow) */
 #code-window {
