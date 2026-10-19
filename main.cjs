@@ -13,8 +13,10 @@ function fileFromArgs(argv) {
 
 /* ---------- window size ---------- */
 
-// Preferred size; on smaller screens (e.g. a 14" laptop) the window shrinks to fit the work area.
-const PREFERRED = { width: 1400, height: 880 };
+// Preferred size, like a 15" laptop screen; on smaller screens the window shrinks to fit the work area.
+const PREFERRED = { width: 1680, height: 1050 };
+// Bumped when the default size changes, so sizes saved by older versions are not reused.
+const STATE_VERSION = 2;
 const MINIMUM = { width: 760, height: 480 };
 const stateFile = () => path.join(app.getPath('userData'), 'window-state.json');
 
@@ -28,14 +30,14 @@ function readWindowState() {
 
 function saveWindowState() {
   try {
-    fs.writeFileSync(stateFile(), JSON.stringify({ ...win.getNormalBounds(), maximized: win.isMaximized() }));
+    fs.writeFileSync(stateFile(), JSON.stringify({ v: STATE_VERSION, ...win.getNormalBounds(), maximized: win.isMaximized() }));
   } catch { /* not essential */ }
 }
 
 // The last size and position if they still fit on a connected screen, otherwise a size that fits.
 function initialBounds() {
   const saved = readWindowState();
-  if (saved && saved.width >= MINIMUM.width && saved.height >= MINIMUM.height) {
+  if (saved && saved.v === STATE_VERSION && saved.width >= MINIMUM.width && saved.height >= MINIMUM.height) {
     const area = screen.getDisplayMatching(saved).workArea;
     const inside = saved.x >= area.x && saved.y >= area.y
       && saved.x + saved.width <= area.x + area.width && saved.y + saved.height <= area.y + area.height;
