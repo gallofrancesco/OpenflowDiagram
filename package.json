@@ -1,0 +1,66 @@
+{
+  "name": "flusso",
+  "productName": "Flusso",
+  "version": "1.0.0",
+  "description": "Ambiente di programmazione con diagrammi di flusso, con traduzione in C, C++, Java e Python",
+  "author": "Francesco Gallo",
+  "license": "MIT",
+  "type": "module",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node tests/run-tests.mjs",
+    "icon": "node build/make-icon.mjs",
+    "guide": "node tools/screenshots.mjs && node tools/make-guide.mjs && electron tools/guide-pdf.cjs",
+    "dist": "electron-builder --win nsis",
+    "dist:win": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg zip",
+    "dist:linux": "electron-builder --linux AppImage deb tar.gz"
+  },
+  "devDependencies": {
+    "electron": "38.8.6",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "app.flusso.editor",
+    "productName": "Flusso",
+    "artifactName": "Flusso-${version}-${os}-${arch}.${ext}",
+    "directories": { "output": "dist" },
+    "files": ["main.cjs", "preload.cjs", "package.json", "src/**/*", "build/icon.png"],
+    "extraResources": [{ "from": "examples", "to": "examples" }],
+    "electronFuses": {
+      "runAsNode": false,
+      "enableCookieEncryption": true,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true
+    },
+    "win": { "target": "nsis", "icon": "build/icon.png" },
+    "nsis": {
+      "artifactName": "Flusso Setup ${version}.${ext}",
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Flusso",
+      "uninstallDisplayName": "Flusso"
+    },
+    "mac": {
+      "target": [{ "target": "dmg", "arch": ["universal"] }, { "target": "zip", "arch": ["universal"] }],
+      "icon": "build/icon.png",
+      "category": "public.app-category.education",
+      "hardenedRuntime": true
+    },
+    "dmg": { "title": "Flusso ${version}" },
+    "linux": {
+      "target": ["AppImage", "deb", "tar.gz"],
+      "icon": "build/icon.png",
+      "category": "Education",
+      "maintainer": "Francesco Gallo",
+      "synopsis": "Programmare con i diagrammi di flusso",
+      "desktop": { "entry": { "Name": "Flusso", "Comment": "Programmare con i diagrammi di flusso" } }
+    }
+  }
+}

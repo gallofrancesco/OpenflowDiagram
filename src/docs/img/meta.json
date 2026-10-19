@@ -1,0 +1,76 @@
+{
+  "overview": {
+    "areas": {
+      "toolbar": {
+        "x": 0,
+        "y": 0,
+        "width": 1400,
+        "height": 57
+      },
+      "file": {
+        "x": 14,
+        "y": 10,
+        "width": 124,
+        "height": 36
+      },
+      "run": {
+        "x": 252,
+        "y": 10,
+        "width": 253.4375,
+        "height": 36
+      },
+      "speed": {
+        "x": 515.4375,
+        "y": 9,
+        "width": 112,
+        "height": 38
+      },
+      "funcs": {
+        "x": 648.4375,
+        "y": 9,
+        "width": 150,
+        "height": 38
+      },
+      "tabs": {
+        "x": 15,
+        "y": 72,
+        "width": 936,
+        "height": 46
+      },
+      "chart": {
+        "x": 15,
+        "y": 118,
+        "width": 936,
+        "height": 718.5
+      },
+      "console": {
+        "x": 966,
+        "y": 71,
+        "width": 420,
+        "height": 376.25
+      },
+      "vars": {
+        "x": 966,
+        "y": 461.25,
+        "width": 420,
+        "height": 376.25
+      },
+      "trace": {
+        "x": 1193.640625,
+        "y": 10,
+        "width": 91.1875,
+        "height": 36
+      },
+      "code": {
+        "x": 1294.828125,
+        "y": 10,
+        "width": 91.171875,
+        "height": 36
+      }
+    },
+    "window": {
+      "width": 1400,
+      "height": 880
+    }
+  }
+}

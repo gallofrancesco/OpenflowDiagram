@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'unsafe-inline'">
+<title>Flusso — Guida introduttiva</title>
+<style>
+:root {
+  --primary: #007aff; --primary-subtle: #e6f1ff; --text: #1c1c1e; --text-2: #3a3a3c; --muted: #6e6e73;
+  --bg: #f2f2f7; --surface: #fff; --border: #e3e3e8; --header: #f7f7f9;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --mono: "SF Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.65 var(--font); -webkit-font-smoothing: antialiased; }
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1320px; margin: 0 auto; }
+nav.toc { position: sticky; top: 0; height: 100vh; overflow: auto; padding: 28px 18px 28px 24px; }
+nav.toc .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 19px; margin-bottom: 18px; }
+nav.toc .brand img { width: 34px; height: 34px; }
+nav.toc a { display: flex; gap: 10px; padding: 6px 10px; border-radius: 8px; color: var(--text-2); text-decoration: none; font-size: 14.5px; }
+nav.toc a span { color: var(--muted); min-width: 18px; text-align: right; font-variant-numeric: tabular-nums; }
+nav.toc a:hover { background: var(--primary-subtle); color: var(--primary); }
+main { padding: 28px 32px 60px 8px; }
+section, header.hero { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 30px 36px; margin-bottom: 22px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+header.hero { display: flex; gap: 26px; align-items: center; background: linear-gradient(135deg, #ffffff 0%, #eef5ff 100%); }
+header.hero .logo { width: 104px; height: 104px; flex: none; }
+.eyebrow { color: var(--primary); font-weight: 600; margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: .05em; }
+h1 { font-size: 36px; line-height: 1.15; margin: 6px 0 10px; letter-spacing: -.02em; }
+.lead { font-size: 18px; color: var(--text-2); margin: 0; }
+h2 { font-size: 27px; margin: 0 0 16px; letter-spacing: -.01em; display: flex; align-items: center; gap: 12px; }
+h2 .num { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: var(--primary); color: #fff; font-size: 17px; }
+h3 { font-size: 19px; margin: 24px 0 8px; }
+p { margin: 10px 0; }
+code { font-family: var(--mono); font-size: .9em; background: #f2f2f7; border-radius: 5px; padding: 1px 6px; }
+kbd { font-family: var(--font); font-size: 13px; font-weight: 600; background: #fff; border: 1px solid #c7c7cc; border-bottom-width: 2px; border-radius: 6px; padding: 1px 7px; white-space: nowrap; }
+figure { margin: 18px 0; }
+figure img { display: block; max-width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 6px 22px rgba(0,0,0,.10); }
+figure.narrow img { max-width: 560px; }
+figcaption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+.two figure { margin-top: 8px; }
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 16px 0; }
+.card { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; background: var(--header); font-size: 15px; }
+.card-title { font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+.callout { display: flex; gap: 14px; border-radius: 12px; padding: 14px 18px; margin: 18px 0; font-size: 15px; }
+.callout strong { white-space: nowrap; }
+.callout.tip { background: #e8f7ec; border: 1px solid #bfe8ca; }
+.callout.tip strong { color: #1e8a3c; }
+.callout.note { background: var(--primary-subtle); border: 1px solid #c3dcff; }
+.callout.note strong { color: #0060d1; }
+.annotated { position: relative; margin: 16px 0; }
+.annotated img { display: block; width: 100%; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 6px 22px rgba(0,0,0,.10); }
+.badge-n { position: absolute; transform: translate(-50%, -50%); width: 30px; height: 30px; border-radius: 50%; background: #ff3b30; color: #fff;
+  font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; border: 2.5px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+ol.legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px 30px; padding: 0; list-style: none; counter-reset: c; }
+ol.legend li { counter-increment: c; display: flex; gap: 10px; align-items: center; }
+ol.legend li::before { content: counter(c); flex: none; width: 24px; height: 24px; border-radius: 50%; background: #ff3b30; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.steps { display: flex; flex-direction: column; gap: 6px; }
+.step { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-top: 1px solid var(--border); }
+.step:first-child { border-top: none; }
+.step-n { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-subtle); color: var(--primary); font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+.step h3 { margin-top: 6px; }
+table.data { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 14px 0; font-size: 15px; }
+table.data th { background: var(--header); text-align: left; padding: 10px 14px; font-weight: 600; border-bottom: 1px solid var(--border); }
+table.data td { padding: 9px 14px; border-bottom: 1px solid #efeff3; vertical-align: middle; }
+table.data tr:last-child td { border-bottom: none; }
+table.data.compact td { padding: 7px 14px; }
+table.shapes td.icon { width: 140px; }
+table.shapes td.icon svg { display: block; }
+.pill { display: inline-block; padding: 1px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+.b-Integer { background: #e6f1ff; color: #0060d1; } .b-Real { background: #f5e9fb; color: #8e3cb5; }
+.b-String { background: #fff1e0; color: #b35c00; } .b-Boolean { background: #e5f7ea; color: #1e8a3c; }
+.pill.yes { background: #e5f7ea; color: #1e8a3c; } .pill.no { background: #ffeceb; color: #d70015; }
+ul.checks { padding-left: 0; list-style: none; }
+ul.checks li { position: relative; padding-left: 28px; margin: 8px 0; }
+ul.checks li::before { content: "✓"; position: absolute; left: 4px; color: var(--primary); font-weight: 700; }
+ol.exercises li { margin: 8px 0; }
+dl.faq dt { font-weight: 600; margin-top: 14px; }
+dl.faq dd { margin: 4px 0 0; color: var(--text-2); }
+footer { text-align: center; color: var(--muted); font-size: 14px; padding: 10px 0 30px; }
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; }
+  nav.toc { display: none; }
+  main { padding: 16px; }
+  .two, .cards { grid-template-columns: 1fr; }
+}
+@media print {
+  @page { size: A4; margin: 14mm 12mm; }
+  body { background: #fff; font-size: 12.5pt; }
+  .layout { display: block; max-width: none; }
+  nav.toc { display: none; }
+  main { padding: 0; }
+  section, header.hero { box-shadow: none; border: none; padding: 0; margin: 0 0 9mm; }
+  header.hero { background: #fff; }
+  /* Only small things are kept whole; long sections and steps may flow across pages. */
+  h2, h3 { break-after: avoid; }
+  figure, .annotated, tr, .callout, .card { break-inside: avoid; }
+  figure img, .annotated img { box-shadow: none; }
+  figure.narrow img { max-width: 70%; }
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .badge-n { width: 20px; height: 20px; font-size: 11px; border-width: 1.5px; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Indice">
+  <div class="brand"><img src="../../build/icon.png" alt="">Flusso</div>
+  <a href="#benvenuto"><span>1</span>Benvenuto in Flusso</a><a href="#finestra"><span>2</span>La finestra principale</a><a href="#primo"><span>3</span>Il primo programma</a><a href="#blocchi"><span>4</span>I blocchi</a><a href="#linguaggio"><span>5</span>Tipi, operatori e funzioni</a><a href="#esecuzione"><span>6</span>Eseguire e fare debug</a><a href="#console"><span>7</span>Console e Variabili</a><a href="#funzioni"><span>8</span>Funzioni</a><a href="#codice"><span>9</span>Codice sorgente</a><a href="#traccia"><span>10</span>Tabella di traccia</a><a href="#file"><span>11</span>File, salvataggio ed esportazione</a><a href="#personalizza"><span>12</span>Personalizzare Flusso</a><a href="#tasti"><span>13</span>Scorciatoie da tastiera</a><a href="#esempi"><span>14</span>Esempi ed esercizi</a><a href="#faq"><span>15</span>Domande frequenti</a>
+</nav>
+<main>
+
+<header class="hero">
+  <img class="logo" src="../../build/icon.png" alt="">
+  <div>
+    <p class="eyebrow">Guida introduttiva · versione 1.0.0</p>
+    <h1>Programmare con i diagrammi di flusso</h1>
+    <p class="lead">Tutto quello che serve per usare Flusso: creare un programma, eseguirlo passo passo, seguirne i valori
+    con la tabella di traccia e tradurlo in C, C++, Java o Python.</p>
+  </div>
+</header>
+
+<section>
+<h2 id="benvenuto"><span class="num">1</span>Benvenuto in Flusso</h2>
+<p>Flusso è un ambiente per imparare a programmare <b>disegnando</b>: invece di scrivere codice, costruisci un diagramma di
+flusso con blocchi grafici (dichiarazioni, input, output, condizioni, cicli…) e lo esegui subito. Puoi:</p>
+<div class="cards">
+  <div class="card"><div class="card-title">Costruire</div>Inserisci i blocchi cliccando sulle frecce del diagramma.</div>
+  <div class="card"><div class="card-title">Eseguire</div>Tutto insieme o un blocco alla volta, guardando le variabili cambiare.</div>
+  <div class="card"><div class="card-title">Tracciare</div>La tabella di traccia registra valori e condizioni a ogni passo.</div>
+  <div class="card"><div class="card-title">Tradurre</div>Il diagramma diventa codice C, C++, Java o Python, sempre aggiornato.</div>
+</div>
+<div class="callout note"><strong>Da sapere</strong><div>I programmi si salvano in file <code>.fprg</code>, lo stesso formato di Flowgorithm: puoi aprire i file creati con Flowgorithm e viceversa (per i blocchi supportati).</div></div>
+</section>
+
+<section>
+<h2 id="finestra"><span class="num">2</span>La finestra principale</h2>
+<p>All'avvio Flusso mostra un programma vuoto. Questa è la finestra con un programma d'esempio appena eseguito:</p>
+<div class="annotated">
+  <img src="img/overview.png" alt="La finestra principale di Flusso">
+  <span class="badge-n" style="left:5.43%;top:7.05%">1</span>
+  <span class="badge-n" style="left:27.05%;top:7.05%">2</span>
+  <span class="badge-n" style="left:40.82%;top:7.16%">3</span>
+  <span class="badge-n" style="left:51.67%;top:7.16%">4</span>
+  <span class="badge-n" style="left:29.29%;top:10.80%">5</span>
+  <span class="badge-n" style="left:4.21%;top:18.41%">6</span>
+  <span class="badge-n" style="left:68.86%;top:29.45%">7</span>
+  <span class="badge-n" style="left:68.86%;top:73.79%">8</span>
+  <span class="badge-n" style="left:88.52%;top:7.05%">9</span>
+  <span class="badge-n" style="left:95.74%;top:7.05%">10</span>
+</div>
+<ol class="legend"><li>File: nuovo, apri, salva</li><li>Esegui, Passo, Pausa, Ferma</li><li>Velocità di esecuzione</li><li>Funzione mostrata nel diagramma</li><li>Schede Diagramma e Tabella di traccia</li><li>Il diagramma di flusso</li><li>Console: output e input</li><li>Variabili e loro valori</li><li>Tabella di traccia</li><li>Finestra del codice sorgente</li></ol>
+<p>La <b>barra dei menu</b> (File, Modifica, Programma, Visualizza, Strumenti, Aiuto) contiene tutti i comandi, anche quelli
+che non hanno un pulsante. Console e Variabili si possono chiudere con la <kbd>✕</kbd> e riaprire con i pulsanti a destra
+della barra; il bordo tra diagramma e pannelli si trascina per cambiarne la larghezza.</p>
+</section>
+
+<section>
+<h2 id="primo"><span class="num">3</span>Il primo programma</h2>
+<p>Costruiamo un programma che chiede il nome e saluta: <i>"Come ti chiami?" → Ada → "Ciao, Ada!"</i></p>
+<div class="steps">
+<div class="step"><div class="step-n">1</div><div>
+  <h3>Inserisci un blocco</h3>
+  <p>Un programma nuovo contiene solo <b>Main</b> e <b>Fine</b>. Clicca sulla <b>freccia</b> tra i due: si apre il menu dei blocchi,
+  diviso in Blocchi, Cicli, Altro e File. Ogni pulsante mostra la forma del blocco.</p>
+  <figure class=""><img src="img/tutorial-insert.png" alt="Il menu che compare cliccando su una freccia."><figcaption>Il menu che compare cliccando su una freccia.</figcaption></figure>
+</div></div>
+<div class="step"><div class="step-n">2</div><div>
+  <h3>Dichiara una variabile</h3>
+  <p>Scegli <b>Dichiara</b>. Nella finestra scrivi il nome <code>nome</code> e scegli il tipo <b>String</b>, poi <b>OK</b>.
+  Le variabili vanno sempre dichiarate prima di usarle.</p>
+  <figure class="narrow"><img src="img/tutorial-declare.png" alt="La finestra del blocco Dichiara."><figcaption>La finestra del blocco Dichiara.</figcaption></figure>
+</div></div>
+<div class="step"><div class="step-n">3</div><div>
+  <h3>Aggiungi Output e Input</h3>
+  <p>Clicca sulla freccia sotto <i>String nome</i> e scegli <b>Output</b>: scrivi <code>"Come ti chiami?"</code> (il testo va tra virgolette).
+  Poi, sotto, un blocco <b>Input</b> con la variabile <code>nome</code>, e infine un altro <b>Output</b> con
+  <code>"Ciao, " &amp; nome &amp; "!"</code> — il simbolo <code>&amp;</code> unisce testi e valori.</p>
+  <figure class="narrow"><img src="img/tutorial-output.png" alt="La finestra del blocco Output: l'opzione "Vai a capo" è attiva di default."><figcaption>La finestra del blocco Output: l'opzione "Vai a capo" è attiva di default.</figcaption></figure>
+</div></div>
+<div class="step"><div class="step-n">4</div><div>
+  <h3>Controlla il diagramma</h3>
+  <p>Il programma completo è questo. Se un campo è vuoto o un'espressione è sbagliata, Flusso te lo dice subito nella finestra del blocco;
+  un blocco lasciato vuoto appare tratteggiato.</p>
+  <figure class="narrow"><img src="img/tutorial-chart.png" alt="Il programma "Saluto"."><figcaption>Il programma "Saluto".</figcaption></figure>
+</div></div>
+<div class="step"><div class="step-n">5</div><div>
+  <h3>Esegui e rispondi</h3>
+  <p>Premi <b>Esegui</b> (<kbd>F5</kbd>). Quando il programma arriva al blocco Input, la casella in fondo alla Console si illumina:
+  scrivi la risposta e premi <kbd>Invio</kbd>.</p>
+  <figure class="narrow"><img src="img/tutorial-waiting.png" alt="La Console attende un valore."><figcaption>La Console attende un valore.</figcaption></figure>
+  <figure class=""><img src="img/tutorial-run.png" alt="Il programma terminato: l'output nella Console e il valore di nome nel pannello Variabili."><figcaption>Il programma terminato: l'output nella Console e il valore di <code>nome</code> nel pannello Variabili.</figcaption></figure>
+</div></div>
+<div class="step"><div class="step-n">6</div><div>
+  <h3>Salva</h3>
+  <p>Usa <b>File › Salva</b> (<kbd>Ctrl</kbd>+<kbd>S</kbd>). Il pallino • nel titolo della finestra indica modifiche non salvate.</p>
+</div></div>
+</div>
+</section>
+
+<section>
+<h2 id="blocchi"><span class="num">4</span>I blocchi</h2>
+<table class="data shapes">
+<thead><tr><th>Blocco</th><th>A cosa serve</th><th>Esempio</th></tr></thead>
+<tbody><tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#fff6d5" stroke="#d6a400" stroke-width="1.6"><rect x="2" y="2" width="112" height="38" rx="8"/><path fill="none" d="M11,2 L11,40 M2,11 L114,11"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Dichiara</text></g></svg></td><td>Crea una o più variabili di un tipo (Integer, Real, String, Boolean), anche come array.</td><td><code>Integer n, i  ·  Real Array voti[10]</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#fff6d5" stroke="#d6a400" stroke-width="1.6"><rect x="2" y="2" width="112" height="38" rx="8"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Assegna</text></g></svg></td><td>Calcola un'espressione e ne mette il risultato in una variabile.</td><td><code>somma = somma + x</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#e2f6e7" stroke="#34c759" stroke-width="1.6"><polygon points="16,2 114,2 100,40 2,40"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Input</text></g></svg></td><td>Chiede un valore all'utente nella Console e lo salva in una variabile.</td><td><code>Input nome</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#e2f6e7" stroke="#34c759" stroke-width="1.6"><polygon points="2,2 100,2 114,40 16,40"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Output</text></g></svg></td><td>Mostra un valore o un testo nella Console (con o senza "a capo").</td><td><code>Output "Ciao, " & nome</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#ffefd9" stroke="#ff9500" stroke-width="1.6"><polygon points="58,2 114,21 58,40 2,21"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Se</text></g></svg></td><td>Sceglie tra due rami in base a una condizione: Vero a destra, Falso a sinistra.</td><td><code>Se voto >= 6</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#e3efff" stroke="#007aff" stroke-width="1.6"><rect x="2" y="2" width="112" height="38" rx="8"/><path fill="none" d="M11,2 L11,40 M105,2 L105,40"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Chiama</text></g></svg></td><td>Esegue una funzione che non restituisce valori.</td><td><code>Ordina(v)</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#ffe6e4" stroke="#ff6961" stroke-width="1.6"><polygon points="18,2 98,2 114,21 98,40 18,40 2,21"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Mentre</text></g></svg></td><td>Ripete il corpo finché la condizione è vera (controllo all'inizio).</td><td><code>Mentre n != 1</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#ffe6e4" stroke="#ff6961" stroke-width="1.6"><polygon points="18,2 98,2 114,21 98,40 18,40 2,21"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Per</text></g></svg></td><td>Ripete con un contatore da un valore iniziale a uno finale, crescente o decrescente, con passo.</td><td><code>Per i = 1 to 10 step 2</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#ffe6e4" stroke="#ff6961" stroke-width="1.6"><polygon points="18,2 98,2 114,21 98,40 18,40 2,21"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Ripeti</text></g></svg></td><td>Esegue il corpo almeno una volta e lo ripete finché la condizione è vera (controllo alla fine).</td><td><code>Ripeti … mentre risposta != "no"</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#f5f5f7" stroke="#aeaeb2" stroke-width="1.6"><rect class="comment-bg" x="2" y="2" width="112" height="38" stroke="none"/><path fill="none" d="M16,2 L2,2 L2,40 L16,40"/><text x="58" y="26" fill="#6e6e73" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Commento</text></g></svg></td><td>Una nota nel diagramma: non viene eseguita.</td><td><code>Calcolo della media</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#ff3b30" stroke="#d70015" stroke-width="1.6"><polygon points="14.666666666666666,2 101.33333333333333,2 114,14.666666666666666 114,27.333333333333336 101.33333333333333,40 14.666666666666666,40 2,27.333333333333336 2,14.666666666666666"/><text x="58" y="26" fill="#ffffff" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Breakpoint</text></g></svg></td><td>Mette in pausa l'esecuzione in quel punto (sempre o solo se una condizione è vera).</td><td><code>Breakpoint: i == 5</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#efe9ff" stroke="#5e5ce6" stroke-width="1.6"><polygon points="14,2 114,2 114,40 2,40 2,14"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Apri file</text></g></svg></td><td>Apre un file di testo in lettura o in scrittura.</td><td><code>Apri file "dati.txt" (Lettura)</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#efe9ff" stroke="#5e5ce6" stroke-width="1.6"><polygon points="16,2 114,2 100,40 2,40"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Leggi file</text></g></svg></td><td>Legge la riga successiva del file in una variabile.</td><td><code>Leggi file x</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#efe9ff" stroke="#5e5ce6" stroke-width="1.6"><polygon points="2,2 100,2 114,40 16,40"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Scrivi file</text></g></svg></td><td>Scrive un valore come nuova riga del file.</td><td><code>Scrivi file totale</code></td></tr>
+<tr><td class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="116" height="42" viewBox="0 0 116 42" aria-hidden="true"><g fill="#efe9ff" stroke="#5e5ce6" stroke-width="1.6"><polygon points="14,2 114,2 114,40 2,40 2,14"/><text x="58" y="26" fill="#1d1d1f" stroke="none" text-anchor="middle" font-size="14" font-family='"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif'>Chiudi file</text></g></svg></td><td>Chiude il file aperto (i dati scritti vengono salvati).</td><td><code>Chiudi file</code></td></tr></tbody></table>
+<h3>Lavorare con i blocchi</h3>
+<ul class="checks">
+  <li><b>Modificare</b>: doppio clic sul blocco (oppure selezionalo e premi <kbd>Invio</kbd>).</li>
+  <li><b>Selezionare più blocchi</b>: clic sul primo e <kbd>Shift</kbd>+clic sull'ultimo (devono essere nello stesso ramo).</li>
+  <li><b>Tagliare, copiare, incollare, eliminare</b>: clic destro sul blocco, oppure <kbd>Ctrl</kbd>+<kbd>X</kbd>/<kbd>C</kbd>/<kbd>V</kbd> e <kbd>Canc</kbd>.
+  Per incollare in un punto preciso, clicca la freccia e scegli <b>Incolla</b> in fondo al menu.</li>
+  <li><b>Annullare</b>: <kbd>Ctrl</kbd>+<kbd>Z</kbd> e <kbd>Ctrl</kbd>+<kbd>Y</kbd> annullano e ripetono qualsiasi modifica.</li>
+  <li><b>Zoom</b>: pulsanti lente nella barra, oppure <kbd>Ctrl</kbd>+rotellina.</li>
+</ul>
+<figure class="narrow"><img src="img/shapes.png" alt="Se e cicli: il ramo Vero e il ramo Falso, e la freccia che riporta all'inizio del ciclo Mentre (esempio "Cicli")."><figcaption>Se e cicli: il ramo Vero e il ramo Falso, e la freccia che riporta all'inizio del ciclo Mentre (esempio "Cicli").</figcaption></figure>
+</section>
+
+<section>
+<h2 id="linguaggio"><span class="num">5</span>Tipi, operatori e funzioni</h2>
+<div class="two">
+<div>
+<h3>Tipi</h3>
+<table class="data compact"><thead><tr><th>Tipo</th><th>Valori</th></tr></thead><tbody>
+<tr><td><span class="pill b-Integer">Integer</span></td><td>numeri interi: <code>42</code>, <code>-7</code></td></tr>
+<tr><td><span class="pill b-Real">Real</span></td><td>numeri con la virgola: <code>3.14</code></td></tr>
+<tr><td><span class="pill b-String">String</span></td><td>testo: <code>"ciao"</code></td></tr>
+<tr><td><span class="pill b-Boolean">Boolean</span></td><td><code>true</code> o <code>false</code></td></tr>
+</tbody></table>
+<h3>Operatori</h3>
+<table class="data compact"><thead><tr><th>Operatore</th><th>Significato</th></tr></thead><tbody>
+<tr><td><code>+ - * /</code></td><td>aritmetica (<code>/</code> dà sempre un Real: <code>7 / 2 = 3.5</code>)</td></tr>
+<tr><td><code>%</code> o <code>mod</code></td><td>resto della divisione</td></tr>
+<tr><td><code>^</code></td><td>potenza: <code>2 ^ 10</code></td></tr>
+<tr><td><code>&amp;</code></td><td>unisce testi e valori</td></tr>
+<tr><td><code>== != &lt; &lt;= &gt; &gt;=</code></td><td>confronti (anche <code>=</code> e <code>&lt;&gt;</code>)</td></tr>
+<tr><td><code>and or not</code></td><td>logica (anche <code>&amp;&amp; || !</code>)</td></tr>
+</tbody></table>
+</div>
+<div>
+<h3>Funzioni predefinite</h3>
+<table class="data compact"><thead><tr><th>Funzione</th><th>Risultato</th></tr></thead><tbody><tr><td><code>Abs(x)</code></td><td>valore assoluto</td></tr><tr><td><code>Sqrt(x)</code></td><td>radice quadrata</td></tr><tr><td><code>Int(x)</code></td><td>parte intera (tronca i decimali)</td></tr><tr><td><code>Sgn(x)</code></td><td>segno: -1, 0 o 1</td></tr><tr><td><code>Random(n)</code></td><td>numero intero casuale da 0 a n-1</td></tr><tr><td><code>Log(x), Log10(x)</code></td><td>logaritmo naturale e in base 10</td></tr><tr><td><code>Sin, Cos, Tan(x)</code></td><td>funzioni trigonometriche (radianti)</td></tr><tr><td><code>ArcSin, ArcCos, ArcTan(x)</code></td><td>funzioni inverse</td></tr><tr><td><code>Len(s)</code></td><td>lunghezza di una stringa</td></tr><tr><td><code>Char(s, i)</code></td><td>carattere in posizione i (da 0)</td></tr><tr><td><code>ToCode(s)</code></td><td>codice del primo carattere</td></tr><tr><td><code>ToChar(n)</code></td><td>carattere con codice n</td></tr><tr><td><code>ToInteger(x)</code></td><td>converte in Integer (anche da testo)</td></tr><tr><td><code>ToReal(x)</code></td><td>converte in Real</td></tr><tr><td><code>ToString(x)</code></td><td>converte in testo</td></tr><tr><td><code>ToFixed(x, d)</code></td><td>testo con d cifre decimali</td></tr><tr><td><code>Size(a)</code></td><td>numero di elementi di un array</td></tr><tr><td><code>EOF()</code></td><td>vero se il file aperto in lettura è finito</td></tr><tr><td><code>Pi</code></td><td>la costante π</td></tr></tbody></table>
+</div>
+</div>
+<div class="callout note"><strong>Da sapere</strong><div>Gli array partono da 0: un <code>Integer Array v[5]</code> ha gli elementi <code>v[0]</code> … <code>v[4]</code>. Maiuscole e minuscole nei nomi non contano (<code>Somma</code> e <code>somma</code> sono la stessa variabile).</div></div>
+</section>
+
+<section>
+<h2 id="esecuzione"><span class="num">6</span>Eseguire e fare debug</h2>
+<table class="data compact"><thead><tr><th>Pulsante</th><th>Cosa fa</th></tr></thead><tbody>
+<tr><td><b>Esegui</b> <kbd>F5</kbd></td><td>Esegue il programma alla velocità scelta; durante una pausa, riprende.</td></tr>
+<tr><td><b>Passo</b> <kbd>F10</kbd></td><td>Esegue <b>un blocco alla volta</b>: il blocco evidenziato in arancione è quello che sta per essere eseguito.</td></tr>
+<tr><td><b>Pausa</b> <kbd>F6</kbd></td><td>Ferma temporaneamente un programma in esecuzione.</td></tr>
+<tr><td><b>Ferma</b> <kbd>Shift</kbd>+<kbd>F5</kbd></td><td>Interrompe il programma.</td></tr>
+<tr><td><b>Velocità</b></td><td>Lenta, Media, Veloce (per seguire l'evidenziazione) o Massima (risultato immediato).</td></tr>
+</tbody></table>
+<figure class=""><img src="img/step.png" alt="Passo passo: il blocco evidenziato, la riga corrispondente nel codice e le variabili aggiornate."><figcaption>Passo passo: il blocco evidenziato, la riga corrispondente nel codice e le variabili aggiornate.</figcaption></figure>
+<h3>Breakpoint</h3>
+<p>Un blocco <b>Breakpoint</b> mette in pausa il programma quando viene raggiunto (sempre, oppure solo se una condizione è vera).
+Da lì puoi continuare con <b>Esegui</b> o con <b>Passo</b>. <b>Programma › Ignora i breakpoint</b> li salta tutti,
+<b>Rimuovi tutti i breakpoint</b> li elimina.</p>
+<figure class=""><img src="img/breakpoint.png" alt="Il programma in pausa sul breakpoint."><figcaption>Il programma in pausa sul breakpoint.</figcaption></figure>
+<h3>Errori</h3>
+<p>Se qualcosa va storto (divisione per zero, variabile non inizializzata, indice fuori dall'array…) Flusso si ferma,
+evidenzia in rosso il blocco responsabile e spiega il problema in italiano.</p>
+<figure class=""><img src="img/error.png" alt="Un errore di esecuzione: il blocco n = 27 / 0 è evidenziato in rosso."><figcaption>Un errore di esecuzione: il blocco <code>n = 27 / 0</code> è evidenziato in rosso.</figcaption></figure>
+</section>
+
+<section>
+<h2 id="console"><span class="num">7</span>Console e Variabili</h2>
+<p>La <b>Console</b> mostra l'output e raccoglie l'input. Con <b>Fumetti</b> attivo i messaggi appaiono come in una chat
+(programma a sinistra, tu a destra); disattivandolo diventa un terminale classico. <b>Copia tutto</b> copia il contenuto, <b>Pulisci</b> lo svuota.</p>
+<p>Il pannello <b>Variabili</b> mostra il valore di ogni variabile mentre il programma gira; <code>?</code> indica una variabile non ancora
+inizializzata. Con <b>Mostra stack</b> vedi anche le variabili delle funzioni chiamanti:</p>
+<figure class="narrow"><img src="img/variables-stack.png" alt="Dentro la funzione Ordina: le sue variabili e, sotto, quelle di Main."><figcaption>Dentro la funzione Ordina: le sue variabili e, sotto, quelle di Main.</figcaption></figure>
+</section>
+
+<section>
+<h2 id="funzioni"><span class="num">8</span>Funzioni</h2>
+<p>Un programma può avere, oltre a <b>Main</b>, altre funzioni. Usa il pulsante <b>+</b> della barra (o <b>Programma › Aggiungi funzione</b>)
+e scegli nome, tipo restituito, variabile restituita e parametri. Il menu a tendina nella barra mostra la funzione da modificare.</p>
+<div class="two">
+<figure class=""><img src="img/function-edit.png" alt="Definizione di una funzione con un parametro array."><figcaption>Definizione di una funzione con un parametro array.</figcaption></figure>
+<figure class=""><img src="img/function-chart.png" alt="Il diagramma della funzione Somma: il blocco finale restituisce s."><figcaption>Il diagramma della funzione Somma: il blocco finale restituisce <code>s</code>.</figcaption></figure>
+</div>
+<ul class="checks">
+  <li>Una funzione che restituisce un valore si usa nelle espressioni: <code>"Somma = " &amp; Somma(v)</code>.</li>
+  <li>Una funzione senza valore (tipo <b>Nessuno</b>) si esegue con il blocco <b>Chiama</b>.</li>
+  <li>I parametri normali ricevono una copia del valore; gli <b>array</b> sono passati per riferimento (la funzione può modificarli).</li>
+  <li>Doppio clic sul blocco iniziale di una funzione per modificarne la definizione.</li>
+</ul>
+<figure class="narrow"><img src="img/functions-manager.png" alt="Gestione funzioni (pulsante ƒ): apri, modifica, elimina o importa funzioni da un altro file .fprg."><figcaption><b>Gestione funzioni</b> (pulsante ƒ): apri, modifica, elimina o importa funzioni da un altro file .fprg.</figcaption></figure>
+</section>
+
+<section>
+<h2 id="codice"><span class="num">9</span>Codice sorgente</h2>
+<p>Il pulsante <b>Codice</b> (<kbd>F4</kbd>) apre una finestra mobile con il programma tradotto in <b>C, C++, Java o Python</b>.
+La traduzione si aggiorna mentre modifichi il diagramma e, durante l'esecuzione, evidenzia la riga del blocco corrente.
+Trascina la finestra dal titolo e ridimensionala dall'angolo in basso a destra.</p>
+<div class="two">
+<figure class=""><img src="img/code-window.png" alt="Il programma Fattoriale in Python."><figcaption>Il programma Fattoriale in Python.</figcaption></figure>
+<figure class=""><img src="img/code-java.png" alt="Lo stesso programma in Java."><figcaption>Lo stesso programma in Java.</figcaption></figure>
+</div>
+<div class="callout tip"><strong>Suggerimento</strong><div><b>Copia</b> mette il codice negli appunti, <b>Salva su file…</b> lo salva con l'estensione giusta (<code>.c</code>, <code>.cpp</code>, <code>.java</code>, <code>.py</code>), pronto da compilare o eseguire.</div></div>
+</section>
+
+<section>
+<h2 id="traccia"><span class="num">10</span>Tabella di traccia</h2>
+<p>La <b>tabella di traccia</b> è il modo classico per capire cosa fa un algoritmo: una riga per ogni blocco eseguito, con i valori
+delle variabili e l'esito delle condizioni. Si apre con il pulsante <b>Traccia</b> (<kbd>F7</kbd>) e compare in una scheda accanto al diagramma.</p>
+<h3>1. Scegli cosa tracciare</h3>
+<p>La prima volta Flusso chiede quali <b>variabili</b> seguire (raggruppate per funzione) e quali <b>espressioni o condizioni</b>
+calcolare a ogni passo, per esempio <code>i % 2 == 0</code>. Puoi cambiare la scelta con <b>Scegli valori…</b>.</p>
+<figure class="narrow"><img src="img/trace-setup.png" alt="La scelta dei valori: variabili di Main, la variabile r della funzione Fact e una condizione."><figcaption>La scelta dei valori: variabili di Main, la variabile r della funzione Fact e una condizione.</figcaption></figure>
+<h3>2. Costruiscila passo passo</h3>
+<p>Premi <b>Passo</b>: a ogni blocco eseguito si aggiunge una riga, e l'ultima è evidenziata. I valori appena cambiati sono in giallo,
+le condizioni mostrano <span class="pill yes">Vero</span> o <span class="pill no">Falso</span>.</p>
+<figure class=""><img src="img/trace-step.png" alt="Dopo alcuni passi."><figcaption>Dopo alcuni passi.</figcaption></figure>
+<h3>3. Completa ed esporta</h3>
+<p>Con <b>Esegui</b> la tabella si completa. <b>Solo righe con cambiamenti</b> nasconde le righe in cui non cambia nulla;
+<b>Esporta PNG</b> salva un'immagine della tabella, ideale per consegne e appunti.</p>
+<figure class=""><img src="img/trace-table.png" alt="La tabella completa del programma Fattoriale, con la colonna Output."><figcaption>La tabella completa del programma Fattoriale, con la colonna Output.</figcaption></figure>
+</section>
+
+<section>
+<h2 id="file"><span class="num">11</span>File, salvataggio ed esportazione</h2>
+<h3>Leggere e scrivere file</h3>
+<p>I blocchi <b>Apri file</b>, <b>Leggi file</b>, <b>Scrivi file</b> e <b>Chiudi file</b> lavorano su file di testo, una riga per valore.
+Il nome del file è relativo alla cartella del programma salvato (o a Documenti, se il programma non è ancora salvato).
+<code>EOF()</code> dice quando il file è finito.</p>
+<figure class=""><img src="img/files.png" alt="L'esempio "File" scrive i quadrati da 1 a 25 e poi li rilegge sommandoli."><figcaption>L'esempio "File" scrive i quadrati da 1 a 25 e poi li rilegge sommandoli.</figcaption></figure>
+<h3>Salvare, aprire, esportare</h3>
+<ul class="checks">
+  <li><b>File › Salva / Apri</b>: programmi in formato <code>.fprg</code>; puoi anche trascinare un file sulla finestra.</li>
+  <li><b>File › Recenti</b>: gli ultimi file usati. <b>File › Esempi</b>: programmi pronti (si aprono come copie senza nome).</li>
+  <li><b>File › Esporta immagine PNG / SVG</b>: il diagramma della funzione mostrata.</li>
+  <li><b>File › Stampa</b>: stampa tutte le funzioni, una per pagina.</li>
+  <li><b>Programma › Attributi del programma</b>: nome, autori e descrizione salvati nel file.</li>
+</ul>
+</section>
+
+<section>
+<h2 id="personalizza"><span class="num">12</span>Personalizzare Flusso</h2>
+<p>Da <b>Strumenti › Impostazioni</b> scegli lingua (italiano o inglese), schema colori, stile del diagramma, linguaggio
+predefinito per il codice e profondità massima delle chiamate.</p>
+<div class="two">
+<figure class=""><img src="img/settings.png" alt="Le impostazioni."><figcaption>Le impostazioni.</figcaption></figure>
+<figure class=""><img src="img/style-classic.png" alt="Stile Classico con lo schema Vivace."><figcaption>Stile <b>Classico</b> con lo schema <b>Vivace</b>.</figcaption></figure>
+</div>
+<p>Schemi colore: <b>Sistema</b> (predefinito), Pastello, Vivace, Bianco e nero (adatto alla stampa), Progetto.
+Stili: <b>Standard</b>, <b>Descrittivo</b> (ogni blocco mostra anche il suo nome) e <b>Classico</b> (forme tradizionali).
+Si cambiano al volo anche da <b>Visualizza</b>.</p>
+</section>
+
+<section>
+<h2 id="tasti"><span class="num">13</span>Scorciatoie da tastiera</h2>
+<table class="data compact"><thead><tr><th>Tasti</th><th>Azione</th></tr></thead><tbody><tr><td><kbd>Ctrl</kbd>+<kbd>N</kbd></td><td>Nuovo programma</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td>Apri</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Salva</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td><td>Salva con nome</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>P</kbd></td><td>Stampa</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td>Annulla</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Y</kbd></td><td>Ripeti</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>X</kbd> / <kbd>C</kbd> / <kbd>V</kbd></td><td>Taglia, copia, incolla blocchi</td></tr><tr><td><kbd>Canc</kbd></td><td>Elimina i blocchi selezionati</td></tr><tr><td><kbd>Invio</kbd></td><td>Modifica il blocco selezionato</td></tr><tr><td><kbd>Esc</kbd></td><td>Deseleziona / chiude una finestra</td></tr><tr><td><kbd>F5</kbd></td><td>Esegui (o continua)</td></tr><tr><td><kbd>F10</kbd></td><td>Passo</td></tr><tr><td><kbd>F6</kbd></td><td>Pausa</td></tr><tr><td><kbd>Shift</kbd>+<kbd>F5</kbd></td><td>Ferma</td></tr><tr><td><kbd>F4</kbd></td><td>Mostra/nascondi il codice sorgente</td></tr><tr><td><kbd>F7</kbd></td><td>Tabella di traccia</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>=</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd></td><td>Ingrandisci / riduci il diagramma</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>0</kbd></td><td>Zoom 100%</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>rotellina</kbd></td><td>Zoom con il mouse</td></tr><tr><td><kbd>F1</kbd></td><td>Questa guida (Aiuto › Guida introduttiva)</td></tr></tbody></table>
+</section>
+
+<section>
+<h2 id="esempi"><span class="num">14</span>Esempi ed esercizi</h2>
+<p>In <b>File › Esempi</b> trovi:</p>
+<table class="data compact"><thead><tr><th>Esempio</th><th>Cosa mostra</th></tr></thead><tbody>
+<tr><td><b>Fattoriale</b></td><td>ciclo Per e funzione ricorsiva</td></tr>
+<tr><td><b>Ordinamento</b></td><td>array, funzioni con parametri array (bubble sort e somma)</td></tr>
+<tr><td><b>Cicli</b></td><td>Mentre, Ripeti, Per decrescente, Se annidati, breakpoint</td></tr>
+<tr><td><b>Input</b></td><td>lettura di testi, numeri e valori Boolean</td></tr>
+<tr><td><b>Stringhe</b></td><td>Len, Char, ToCode, ToChar, confronti tra testi</td></tr>
+<tr><td><b>File</b></td><td>scrittura e lettura di un file di testo</td></tr>
+</tbody></table>
+<h3>Esercizi per iniziare</h3>
+<ol class="exercises">
+  <li><b>Pari o dispari</b> — chiedi un numero e scrivi se è pari o dispari (suggerimento: <code>n % 2 == 0</code>).</li>
+  <li><b>Tabellina</b> — chiedi un numero e stampa la sua tabellina da 1 a 10 con un ciclo Per.</li>
+  <li><b>Indovina il numero</b> — il programma sceglie <code>Random(100) + 1</code> e risponde "più alto" o "più basso" finché non indovini (ciclo Ripeti).</li>
+  <li><b>Media dei voti</b> — leggi 5 voti in un <code>Real Array</code> e calcola la media; usa <code>ToFixed(media, 2)</code> per l'output.</li>
+  <li><b>Massimo con funzione</b> — scrivi una funzione <code>Massimo(Integer Array a)</code> che restituisce il valore più grande e seguila con la tabella di traccia.</li>
+</ol>
+</section>
+
+<section>
+<h2 id="faq"><span class="num">15</span>Domande frequenti</h2>
+<dl class="faq">
+  <dt>Il programma non parte e un blocco è tratteggiato.</dt><dd>Il blocco è incompleto: fai doppio clic e compila i campi.</dd>
+  <dt>«La variabile … non è stata inizializzata».</dt><dd>La variabile è dichiarata ma non ha ancora un valore: assegnale un valore o leggila con Input prima di usarla.</dd>
+  <dt>«Tipo del valore incompatibile».</dt><dd>Stai mettendo, per esempio, un Real in una variabile Integer: usa <code>Int(…)</code> o dichiara la variabile Real.</dd>
+  <dt>Il programma non finisce mai.</dt><dd>Probabilmente un ciclo infinito: premi <b>Ferma</b> e controlla che la condizione del ciclo possa diventare falsa.</dd>
+  <dt>Voglio vedere un ciclo lentamente.</dt><dd>Scegli la velocità <b>Lenta</b>, oppure usa <b>Passo</b> e la tabella di traccia.</dd>
+  <dt>Come cambio lingua?</dt><dd><b>Strumenti › Impostazioni › Lingua</b> (Tools › Settings in inglese).</dd>
+</dl>
+</section>
+
+<footer>Flusso 1.0.0 · Guida introduttiva</footer>
+</main>
+</div>
+</body>
+</html>

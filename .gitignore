@@ -1,0 +1,13 @@
+# dependencies and build output
+node_modules/
+dist/
+
+# editor / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# files written by the example programs when run from the project folder
+examples/*.txt

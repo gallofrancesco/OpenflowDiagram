@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="4.2">
+    <attributes>
+        <attribute name="name" value="Stringhe"/>
+        <attribute name="authors" value=""/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2026-10-18T21:17:59.509Z"/>
+        <attribute name="created" value="2026-10-18T21:17:59.509Z"/>
+        <attribute name="edited" value="2026-10-18T21:17:59.509Z"/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="nome, inverso" type="String" array="False" size=""/>
+            <declare name="i" type="Integer" array="False" size=""/>
+            <assign variable="nome" expression="&quot;Flusso&quot;"/>
+            <assign variable="inverso" expression="&quot;&quot;"/>
+            <for variable="i" start="Len(nome) - 1" end="0" direction="dec" step="1">
+                <assign variable="inverso" expression="inverso &amp; Char(nome, i)"/>
+            </for>
+            <output expression="inverso" newline="True"/>
+            <output expression="&quot;Lunghezza: &quot; &amp; Len(nome)" newline="True"/>
+            <output expression="ToCode(&quot;A&quot;) + 1" newline="True"/>
+            <output expression="ToChar(66) &amp; ToString(42) &amp; &quot;!&quot;" newline="True"/>
+            <output expression="ToInteger(&quot;17&quot;) * 2" newline="True"/>
+            <if expression="&quot;abc&quot; &lt; &quot;abd&quot; and nome == &quot;Flusso&quot;">
+                <then>
+                    <output expression="&quot;ordinato&quot;" newline="True"/>
+                </then>
+                <else>
+                    <output expression="&quot;no&quot;" newline="True"/>
+                </else>
+            </if>
+            <output expression="&quot;a&quot; + &quot;b&quot;" newline="False"/>
+            <output expression="&quot;c&quot;" newline="True"/>
+        </body>
+    </function>
+</flowgorithm>
