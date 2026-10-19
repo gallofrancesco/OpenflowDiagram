@@ -1188,7 +1188,8 @@ const ICONS = {
   pause: 'M8.5 5v14M15.5 5v14',
   stop: '!M7 6h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z',
   add: 'M12 5v14M5 12h14',
-  functions: 'M9.5 20c2 0 2.6-1.5 3-4l1.6-8.5C14.5 5.2 15.4 4 17.5 4M8 10h8',
+  // The "Call" shape of the flowchart (box with side bars), the usual symbol for a function.
+  functions: 'M3.5 6.5h17v11h-17zM7.5 6.5v11M16.5 6.5v11',
   zoomOut: 'M10.5 17.5a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4.5-4.5M7.5 10.5h6',
   zoomIn: 'M10.5 17.5a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4.5-4.5M7.5 10.5h6M10.5 7.5v6',
   console: 'M5 4.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H10l-5 4v-4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z',
@@ -1272,6 +1273,9 @@ function setupToolbar() {
   codeBtn.querySelector('.lbl').textContent = t('codeShort');
   codeBtn.classList.add('toggle', 'code-toggle');
   codeBtn.classList.toggle('on', settings.codeOpen);
+  // Function manager: icon plus a visible label (the tooltip keeps the full name).
+  const funcBtn = btn('manageFunctions', 'functions', t('manageFunctions').replace('…', ''));
+  funcBtn.querySelector('.lbl').textContent = t('functionsOf');
   const traceBtn = btn('traceTable', 'trace', t('traceTable'));
   traceBtn.querySelector('.lbl').textContent = t('traceShort');
   traceBtn.classList.add('toggle', 'code-toggle');
@@ -1280,7 +1284,7 @@ function setupToolbar() {
     group(btn('undo', 'undo', t('undo'), true), btn('redo', 'redo', t('redo'), true)), sep(),
     group(btn('run', 'run', t('run')), btn('step', 'step', t('step')), btn('pause', 'pause', t('pause'), true), btn('stop', 'stop', t('stop'), true)), speed, sep(),
     funcSel,
-    group(btn('addFunction', 'add', t('addFunction').replace('…', ''), true), btn('manageFunctions', 'functions', t('manageFunctions').replace('…', ''), true)),
+    group(btn('addFunction', 'add', t('addFunction').replace('…', ''), true), funcBtn),
     group(btn('zoomOut', 'zoomOut', t('zoomOut'), true), btn('zoomIn', 'zoomIn', t('zoomIn'), true)),
     h('span', { class: 'spacer' }),
     group(panelBtn('console', 'console', t('console')), panelBtn('variables', 'variables', t('variables'))),

@@ -272,7 +272,7 @@ ${fig('function-chart', 'Il diagramma della funzione Somma: il blocco finale res
   <li>I parametri normali ricevono una copia del valore; gli <b>array</b> sono passati per riferimento (la funzione può modificarli).</li>
   <li>Doppio clic sul blocco iniziale di una funzione per modificarne la definizione.</li>
 </ul>
-${fig('functions-manager', '<b>Gestione funzioni</b> (pulsante ƒ): apri, modifica, elimina o importa funzioni da un altro file .fprg.', 'narrow')}
+${fig('functions-manager', '<b>Gestione funzioni</b> (pulsante <b>Funzioni</b> nella barra): apri, modifica, elimina o importa funzioni da un altro file .fprg.', 'narrow')}
 </section>
 
 <section>
