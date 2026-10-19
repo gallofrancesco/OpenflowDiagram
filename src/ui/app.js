@@ -407,7 +407,7 @@ async function insertStatement(gap, kind) {
   markDirty();
   refresh();
   if (hasEditor(kind)) {
-    const changed = await editStatement(s);
+    const changed = await editStatement(s, { functions: state.program.functions.slice(1) });
     if (changed) {
       markDirty();
       refresh();
@@ -420,7 +420,7 @@ async function editSelected(id) {
   const found = findStatement(currentFunc().body, id);
   if (!found || !hasEditor(found.statement.kind)) return;
   const before = structuredClone(state.program);
-  if (await editStatement(found.statement)) {
+  if (await editStatement(found.statement, { functions: state.program.functions.slice(1) })) {
     state.undo.push({ program: before, funcIndex: state.funcIndex });
     state.redo = [];
     markDirty();

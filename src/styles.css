@@ -386,6 +386,27 @@ body.running #chart .gap { cursor: default; }
 .radios { display: flex; gap: 20px; }
 .nl-mark { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 5px; background: #34c759; color: #fff; font-weight: 700; font-size: 15px; }
 .radios.vertical { flex-direction: column; gap: 8px; }
+/* expression field + ƒ(x) button (input-group) */
+.expr-row { display: flex; }
+.expr-row input { flex: 1; min-width: 0; border-radius: var(--radius) 0 0 var(--radius); position: relative; }
+.expr-row input:focus { z-index: 1; }
+.fn-button { border-radius: 0 var(--radius) var(--radius) 0; margin-left: -1px; min-height: 38px; padding: 4px 12px;
+  font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; font-size: 15px; color: var(--primary); }
+/* function picker popover */
+.fn-picker {
+  position: fixed; z-index: 120; width: 420px; max-height: min(460px, 70vh); display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden;
+}
+.fn-search { margin: 10px; }
+.fn-list { overflow: auto; padding: 0 8px 8px; }
+.fn-group-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); padding: 8px 6px 4px; }
+.fn-item { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; width: 100%; min-height: 0; border: none; background: none;
+  padding: 6px 10px; border-radius: 8px; text-align: left; font-weight: 400; }
+.fn-item code { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--text); }
+.fn-item span { font-size: 13px; color: var(--muted); }
+.fn-item:hover:not(:disabled), .fn-item:focus-visible { background: var(--primary-subtle); }
+.fn-item:hover code { color: var(--primary); }
+.fn-none { padding: 8px 10px; margin: 0; }
 .param-list { display: flex; flex-direction: column; gap: 8px; }
 .param-row { display: flex; gap: 8px; align-items: center; }
 .param-row input[type=text] { flex: 1; min-width: 130px; }

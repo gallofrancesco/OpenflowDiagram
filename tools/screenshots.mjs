@@ -292,6 +292,20 @@ const SCENARIOS = {
     commands: ['scheme_vibrant', 'style_classic', 'zoomOut', 'zoomOut'],
     script: async () => ({ cropSelector: '#chart-scroll', cropPad: 0 }),
   },
+  'function-picker': {
+    program: ex('Ordinamento'),
+    script: async () => {
+      dbl(shape('v[0] = 42'));
+      await wait(200);
+      const input = $$('.dialog input[type=text]')[1];
+      input.value = 'Sqrt(16) + ';
+      input.setSelectionRange(input.value.length, input.value.length);
+      $('.dialog .fn-button').click();
+      await wait(200);
+      const r = box($('.fn-picker')), d = box($('.dialog'));
+      return { crop: pad(union(r, d), 16) };
+    },
+  },
   'file-viewer': {
     program: tempCopy('File'),
     script: async () => {

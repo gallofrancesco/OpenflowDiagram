@@ -226,6 +226,8 @@ ${sec('linguaggio')}
 ${builtinsTable}
 </div>
 </div>
+${tip('Non serve ricordare i nomi: nelle finestre dei blocchi, accanto a ogni campo con un\'espressione, il pulsante <b><i>ƒ(x)</i></b> apre l\'elenco delle funzioni predefinite e delle tue funzioni, con una ricerca. Un clic inserisce la funzione nel punto in cui stai scrivendo, con il cursore già tra le parentesi.')}
+${fig('function-picker', 'Il pulsante <i>ƒ(x)</i> nella finestra di un blocco Assegna.', 'narrow')}
 ${note('Gli array partono da 0: un <code>Integer Array v[5]</code> ha gli elementi <code>v[0]</code> … <code>v[4]</code>. Maiuscole e minuscole nei nomi non contano (<code>Somma</code> e <code>somma</code> sono la stessa variabile).')}
 </section>
 

@@ -88,9 +88,109 @@ export const confirmBox = (title, message, buttons) => modal({
 });
 
 // Groups of radios already contain labels, so they get a <div> instead.
-const field = (label, input, hint) => h(['INPUT', 'SELECT', 'TEXTAREA'].includes(input.tagName) ? 'label' : 'div',
-  { class: 'field' }, h('span', {}, label), input, hint ? h('small', {}, hint) : null);
+// Expression inputs (data-picker) get the ƒ(x) button that inserts functions.
+const field = (label, input, hint) => {
+  if (input.dataset?.picker) {
+    const button = h('button', { type: 'button', class: 'fn-button', title: t('fnPicker'), 'aria-label': t('fnPicker') }, 'ƒ(x)');
+    button.addEventListener('click', () => openPicker(input, button, input.dataset.picker));
+    return h('div', { class: 'field' }, h('span', {}, label), h('div', { class: 'expr-row' }, input, button), hint ? h('small', {}, hint) : null);
+  }
+  return h(['INPUT', 'SELECT', 'TEXTAREA'].includes(input.tagName) ? 'label' : 'div',
+    { class: 'field' }, h('span', {}, label), input, hint ? h('small', {}, hint) : null);
+};
 const textInput = (value, props = {}) => h('input', { type: 'text', value: value ?? '', spellcheck: 'false', ...props });
+const exprInput = (value, mode = 'all') => textInput(value, { 'data-picker': mode });
+
+/* ---------- function picker (ƒ(x)) ---------- */
+
+// Built-in functions by group: [name, arguments shown in the signature (null = constant, no parentheses)].
+const FN_GROUPS = [
+  ['fnGroupMath', [['Abs', 'x'], ['Sqrt', 'x'], ['Int', 'x'], ['Sgn', 'x'], ['Random', 'n'], ['Log', 'x'], ['Log10', 'x'],
+    ['Sin', 'x'], ['Cos', 'x'], ['Tan', 'x'], ['ArcSin', 'x'], ['ArcCos', 'x'], ['ArcTan', 'x'], ['Pi', null]]],
+  ['fnGroupText', [['Len', 's'], ['Char', 's, i'], ['ToCode', 's'], ['ToChar', 'n']]],
+  ['fnGroupConv', [['ToInteger', 'x'], ['ToReal', 'x'], ['ToString', 'x'], ['ToFixed', 'x, d']]],
+  ['fnGroupOther', [['Size', 'a'], ['EOF', '']]],
+];
+
+let pickerFunctions = [];   // the program's own functions, set by editStatement
+let picker = null;
+
+function closePicker() {
+  if (!picker) return;
+  picker.el.remove();
+  window.removeEventListener('keydown', picker.onKey, true);
+  document.removeEventListener('mousedown', picker.onDown, true);
+  picker = null;
+}
+
+// mode 'all': built-ins and functions that return a value; mode 'call': only the program's functions.
+function openPicker(input, anchor, mode) {
+  closePicker();
+  const items = [];
+  if (mode !== 'call') {
+    for (const [group, fns] of FN_GROUPS) {
+      for (const [name, args] of fns) {
+        items.push({
+          group: t(group), sig: args === null ? name : `${name}(${args})`, desc: t(`fn_${name.toLowerCase()}`),
+          text: args === null ? name : `${name}()`, back: args ? 1 : 0,
+        });
+      }
+    }
+  }
+  for (const f of pickerFunctions) {
+    if (mode !== 'call' && f.type === 'None') continue;
+    items.push({
+      group: t('fnGroupUser'),
+      sig: `${f.name}(${f.params.map(p => `${p.type}${p.array ? '[]' : ''} ${p.name}`).join(', ')})`,
+      desc: f.type === 'None' ? t('fnNoValue') : t('fnReturns', { type: f.type }),
+      text: `${f.name}()`, back: f.params.length ? 1 : 0,
+    });
+  }
+
+  const insert = item => {
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? start;
+    input.value = input.value.slice(0, start) + item.text + input.value.slice(end);
+    const caret = start + item.text.length - item.back; // inside the parentheses when there are arguments
+    closePicker();
+    input.focus();
+    input.setSelectionRange(caret, caret);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+
+  const search = textInput('', { class: 'fn-search', placeholder: t('fnSearch'), 'aria-label': t('fnSearch') });
+  const list = h('div', { class: 'fn-list', role: 'listbox' });
+  let shown = [];
+  const render = () => {
+    const q = search.value.trim().toLowerCase();
+    shown = items.filter(i => !q || i.sig.toLowerCase().includes(q) || i.desc.toLowerCase().includes(q));
+    const groups = [...new Set(shown.map(i => i.group))];
+    list.replaceChildren(...(shown.length ? groups.map(g => h('div', { class: 'fn-group' },
+      h('div', { class: 'fn-group-title' }, g),
+      ...shown.filter(i => i.group === g).map(i => h('button', { type: 'button', class: 'fn-item', role: 'option', onclick: () => insert(i) },
+        h('code', {}, i.sig), h('span', {}, i.desc))))) : [h('p', { class: 'muted fn-none' }, mode === 'call' && !items.length ? t('fnNoneDefined') : t('fnNoMatch'))]));
+  };
+  search.addEventListener('input', render);
+  render();
+
+  const el = h('div', { class: 'fn-picker', role: 'dialog', 'aria-label': t('fnPicker') }, search, list);
+  document.body.append(el);
+  const r = anchor.getBoundingClientRect();
+  const pr = el.getBoundingClientRect();
+  el.style.left = `${Math.max(8, Math.min(r.right - pr.width, window.innerWidth - pr.width - 8))}px`;
+  el.style.top = `${r.bottom + 6 + pr.height > window.innerHeight ? Math.max(8, r.top - pr.height - 6) : r.bottom + 6}px`;
+  search.focus();
+
+  // Runs before the dialog's own key handler: Esc closes only the list, Enter inserts the first match.
+  const onKey = e => {
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closePicker(); input.focus(); }
+    else if (e.key === 'Enter' && e.target === search) { e.preventDefault(); e.stopPropagation(); if (shown[0]) insert(shown[0]); }
+  };
+  const onDown = e => { if (!el.contains(e.target) && e.target !== anchor) closePicker(); };
+  window.addEventListener('keydown', onKey, true);
+  document.addEventListener('mousedown', onDown, true);
+  picker = { el, onKey, onDown };
+}
 const select = (value, options) => h('select', {}, options.map(([v, label]) => {
   const o = h('option', { value: v }, label);
   if (v === value) o.selected = true;
@@ -116,7 +216,9 @@ function syntaxCheck(text, label) {
 /* ---------- shape editors ---------- */
 
 // Edits the statement in place; resolves true if something changed.
-export async function editStatement(s) {
+// context.functions: the program's functions, offered by the ƒ(x) picker.
+export async function editStatement(s, context = {}) {
+  pickerFunctions = context.functions || [];
   const body = h('div', { class: 'form' });
   let read = () => ({});
   let checks = () => [];
@@ -125,7 +227,7 @@ export async function editStatement(s) {
       const names = textInput(s.names);
       const type = select(s.type, typeOptions());
       const isArray = h('input', { type: 'checkbox', checked: s.array });
-      const size = textInput(s.size);
+      const size = exprInput(s.size);
       const sizeField = field(t('arraySize'), size);
       const sync = () => { sizeField.style.display = isArray.checked ? '' : 'none'; };
       isArray.addEventListener('change', sync);
@@ -140,7 +242,7 @@ export async function editStatement(s) {
       break;
     }
     case 'assign': {
-      const v = textInput(s.variable), e = textInput(s.expression);
+      const v = textInput(s.variable), e = exprInput(s.expression);
       body.append(field(t('variableName'), v), field(t('expression'), e));
       read = () => ({ variable: v.value.trim(), expression: e.value.trim() });
       checks = x => [syntaxCheck(x.variable, t('variableName')), syntaxCheck(x.expression, t('expression'))];
@@ -154,7 +256,7 @@ export async function editStatement(s) {
       break;
     }
     case 'output': {
-      const e = textInput(s.expression);
+      const e = exprInput(s.expression);
       const nl = h('input', { type: 'checkbox', checked: s.newline });
       // The same marker drawn in the chart (↵ new line, → same line), updated live.
       const mark = h('span', { class: 'nl-mark' });
@@ -171,14 +273,14 @@ export async function editStatement(s) {
       break;
     }
     case 'if': case 'while': case 'do': {
-      const e = textInput(s.expression);
+      const e = exprInput(s.expression);
       body.append(field(t('condition'), e));
       read = () => ({ expression: e.value.trim() });
       checks = x => [syntaxCheck(x.expression, t('condition'))];
       break;
     }
     case 'for': {
-      const v = textInput(s.variable), a = textInput(s.start), b = textInput(s.end), st = textInput(s.step || '1');
+      const v = textInput(s.variable), a = exprInput(s.start), b = exprInput(s.end), st = exprInput(s.step || '1');
       const dir = h('div', { class: 'radios' }, radio('dir', 'inc', s.direction, t('increasing')), radio('dir', 'dec', s.direction, t('decreasing')));
       body.append(field(t('variableName'), v), h('div', { class: 'row' }, field(t('start_'), a), field(t('end_'), b)),
         field(t('direction'), dir), field(t('stepValue'), st));
@@ -187,7 +289,7 @@ export async function editStatement(s) {
       break;
     }
     case 'call': {
-      const e = textInput(s.expression);
+      const e = exprInput(s.expression, 'call');
       body.append(field(t('callText'), e));
       read = () => ({ expression: e.value.trim() });
       checks = x => [syntaxCheck(x.expression, t('callText'))];
@@ -200,7 +302,7 @@ export async function editStatement(s) {
       break;
     }
     case 'breakpoint': {
-      const e = textInput(s.expression);
+      const e = exprInput(s.expression);
       const mode = h('div', { class: 'radios vertical' }, radio('bp', 'always', s.always ? 'always' : 'cond', t('always')), radio('bp', 'cond', s.always ? 'always' : 'cond', t('conditional')));
       body.append(mode, field(t('condition'), e));
       read = () => ({ always: radioValue(body, 'bp') === 'always', expression: e.value.trim() });
@@ -208,7 +310,7 @@ export async function editStatement(s) {
       break;
     }
     case 'open': {
-      const e = textInput(s.expression);
+      const e = exprInput(s.expression);
       const mode = h('div', { class: 'radios' }, radio('mode', 'read', s.mode, t('modeRead')), radio('mode', 'write', s.mode, t('modeWrite')));
       body.append(field(t('fileName'), e, '"dati.txt"'), field(t('mode'), mode));
       read = () => ({ expression: e.value.trim(), mode: radioValue(body, 'mode') });
@@ -216,7 +318,7 @@ export async function editStatement(s) {
       break;
     }
     case 'write': {
-      const e = textInput(s.expression);
+      const e = exprInput(s.expression);
       body.append(field(t('expression'), e));
       read = () => ({ expression: e.value.trim() });
       checks = x => [syntaxCheck(x.expression, t('expression'))];
@@ -230,6 +332,7 @@ export async function editStatement(s) {
     body,
     validate: () => checks(read()).find(Boolean) || null,
   });
+  closePicker();
   if (result !== 'ok') return false;
   Object.assign(s, read());
   return true;
