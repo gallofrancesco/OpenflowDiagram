@@ -1,5 +1,5 @@
 // Core tests: interpreter semantics, runtime errors, .fprg round trip, and generated code
-// executed with real toolchains (Python, Java; C/C++ when OPENFLOW_CC / OPENFLOW_CXX are set).
+// executed with real toolchains (Python, Java; C/C++ when OPENFLOWDIAGRAM_CC / OPENFLOWDIAGRAM_CXX are set).
 import { execFileSync, spawnSync } from 'child_process';
 import { mkdtempSync, writeFileSync, readFileSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
@@ -84,7 +84,7 @@ console.log('Expressions');
 console.log('Interpreter');
 const EXPECTED = {
   factorial: 'Fatt(1) = 1\nFatt(2) = 2\nFatt(3) = 6\nFatt(4) = 24\nFatt(5) = 120\nFatt(6) = 720\n',
-  strings: 'wolfnepO\nLunghezza: 8\n66\nB42!\n34\nordinato\nabc\n',
+  strings: 'margaiDwolfnepO\nLunghezza: 15\n66\nB42!\n34\nordinato\nabc\n',
   arrays: '-3\n7\n7\n19\n42\n100\nSomma = 172\n',
   loops: 'Passi: 111\n0 10 20 \n10\n7\n4\n1\n1024\n-1\nfalse\n4\n',
   input: 'Come ti chiami?\nCiao Ada, somma = 65\nconfermato\n',
@@ -96,7 +96,7 @@ for (const [name, spec] of Object.entries(PROGRAMS)) {
     const r = interpret(spec.build(), spec.input);
     interpreted[name] = r.out;
     check(`run ${name}`, r.out === EXPECTED[name], `got:\n${r.out}`);
-    if (name === 'files') check('file contents written', r.files['openflow_dati.txt'] === '1\n4\n9\n16\n25\n', JSON.stringify(r.files));
+    if (name === 'files') check('file contents written', r.files['dati_esempio.txt'] === '1\n4\n9\n16\n25\n', JSON.stringify(r.files));
   } catch (e) {
     bad(`run ${name}`, e.code ? `${e.code} ${JSON.stringify(e.params)}` : e.stack);
   }
@@ -251,7 +251,7 @@ for (const [name, spec] of Object.entries(PROGRAMS)) {
 
 /* ---------- generated code ---------- */
 console.log('Generated code');
-const dir = mkdtempSync(join(tmpdir(), 'openflow-'));
+const dir = mkdtempSync(join(tmpdir(), 'openflowdiagram-'));
 const norm = s => s.replace(/\r\n/g, '\n').replace(/\bTrue\b/g, 'true').replace(/\bFalse\b/g, 'false');
 
 function have(cmd, args) {
@@ -271,14 +271,14 @@ const toolchains = {
   java: have('java', ['--version']) ? {
     file: 'Main.java', run: (f, input) => spawnSync('java', [f], { cwd: dir, input, encoding: 'utf8' }),
   } : null,
-  c: process.env.OPENFLOW_CC ? {
+  c: process.env.OPENFLOWDIAGRAM_CC ? {
     file: 'prog.c',
-    compile: f => { const [cmd, ...pre] = splitCmd(process.env.OPENFLOW_CC); return spawnSync(cmd, [...pre, f, '-o', join(dir, 'prog_c.exe'), '-lm'], { cwd: dir, encoding: 'utf8' }); },
+    compile: f => { const [cmd, ...pre] = splitCmd(process.env.OPENFLOWDIAGRAM_CC); return spawnSync(cmd, [...pre, f, '-o', join(dir, 'prog_c.exe'), '-lm'], { cwd: dir, encoding: 'utf8' }); },
     run: (_f, input) => spawnSync(join(dir, 'prog_c.exe'), [], { cwd: dir, input, encoding: 'utf8' }),
   } : null,
-  cpp: process.env.OPENFLOW_CXX ? {
+  cpp: process.env.OPENFLOWDIAGRAM_CXX ? {
     file: 'prog.cpp',
-    compile: f => { const [cmd, ...pre] = splitCmd(process.env.OPENFLOW_CXX); return spawnSync(cmd, [...pre, f, '-o', join(dir, 'prog_cpp.exe')], { cwd: dir, encoding: 'utf8' }); },
+    compile: f => { const [cmd, ...pre] = splitCmd(process.env.OPENFLOWDIAGRAM_CXX); return spawnSync(cmd, [...pre, f, '-o', join(dir, 'prog_cpp.exe')], { cwd: dir, encoding: 'utf8' }); },
     run: (_f, input) => spawnSync(join(dir, 'prog_cpp.exe'), [], { cwd: dir, input, encoding: 'utf8' }),
   } : null,
 };

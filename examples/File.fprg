@@ -12,12 +12,12 @@
         <parameters/>
         <body>
             <declare name="i, x, tot" type="Integer" array="False" size=""/>
-            <open expression="&quot;openflow_dati.txt&quot;" mode="write"/>
+            <open expression="&quot;dati_esempio.txt&quot;" mode="write"/>
             <for variable="i" start="1" end="5" direction="inc" step="1">
                 <write expression="i * i"/>
             </for>
             <close/>
-            <open expression="&quot;openflow_dati.txt&quot;" mode="read"/>
+            <open expression="&quot;dati_esempio.txt&quot;" mode="read"/>
             <assign variable="tot" expression="0"/>
             <while expression="not EOF()">
                 <read variable="x"/>

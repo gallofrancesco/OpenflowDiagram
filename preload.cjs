@@ -5,7 +5,7 @@ const os = require('os');
 const path = require('path');
 const pkg = require('./package.json');
 
-contextBridge.exposeInMainWorld('openflow', {
+contextBridge.exposeInMainWorld('openflowDiagram', {
   version: pkg.version,
   setMenu: template => ipcRenderer.send('menu:set', template),
   onMenuCommand: fn => ipcRenderer.on('menu:command', (_e, id) => fn(id)),

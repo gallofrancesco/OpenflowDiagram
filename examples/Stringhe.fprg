@@ -13,7 +13,7 @@
         <body>
             <declare name="nome, inverso" type="String" array="False" size=""/>
             <declare name="i" type="Integer" array="False" size=""/>
-            <assign variable="nome" expression="&quot;Openflow&quot;"/>
+            <assign variable="nome" expression="&quot;OpenflowDiagram&quot;"/>
             <assign variable="inverso" expression="&quot;&quot;"/>
             <for variable="i" start="Len(nome) - 1" end="0" direction="dec" step="1">
                 <assign variable="inverso" expression="inverso &amp; Char(nome, i)"/>
@@ -23,7 +23,7 @@
             <output expression="ToCode(&quot;A&quot;) + 1" newline="True"/>
             <output expression="ToChar(66) &amp; ToString(42) &amp; &quot;!&quot;" newline="True"/>
             <output expression="ToInteger(&quot;17&quot;) * 2" newline="True"/>
-            <if expression="&quot;abc&quot; &lt; &quot;abd&quot; and nome == &quot;Openflow&quot;">
+            <if expression="&quot;abc&quot; &lt; &quot;abd&quot; and nome == &quot;OpenflowDiagram&quot;">
                 <then>
                     <output expression="&quot;ordinato&quot;" newline="True"/>
                 </then>

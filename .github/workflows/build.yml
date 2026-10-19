@@ -1,4 +1,4 @@
-# Builds Openflow for Windows, macOS and Linux on every push to main, on version tags and on demand.
+# Builds OpenflowDiagram for Windows, macOS and Linux on every push to main, on version tags and on demand.
 # The installers are attached to the run as downloadable artifacts; for tags (v1.2.3) they are
 # also published as a GitHub Release.
 name: Build
@@ -56,7 +56,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: openflow-${{ runner.os }}
+          name: openflowdiagram-${{ runner.os }}
           path: ${{ matrix.files }}
           if-no-files-found: error
 

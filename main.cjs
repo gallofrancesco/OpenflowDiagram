@@ -17,7 +17,7 @@ function createWindow() {
     height: 880,
     minWidth: 800,
     minHeight: 500,
-    title: 'Openflow',
+    title: 'OpenflowDiagram',
     icon: path.join(__dirname, 'build', 'icon.png'),
     backgroundColor: '#f5f5f7',
     webPreferences: {
@@ -88,7 +88,7 @@ ipcMain.on('help:guide', () => {
     return;
   }
   guideWin = new BrowserWindow({
-    width: 1240, height: 900, title: 'Openflow — Guida introduttiva', icon: path.join(__dirname, 'build', 'icon.png'),
+    width: 1240, height: 900, title: 'OpenflowDiagram — Guida introduttiva', icon: path.join(__dirname, 'build', 'icon.png'),
     backgroundColor: '#f2f2f7', autoHideMenuBar: true,
     webPreferences: { sandbox: true, contextIsolation: true, nodeIntegration: false },
   });

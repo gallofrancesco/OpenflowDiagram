@@ -17,7 +17,7 @@ import { TraceRecorder } from '../core/trace.js';
 import { renderTraceTable, traceToSvg } from './trace.js';
 import { ConsolePanel, VariablesPanel, CodePanel } from './panels.js';
 
-const api = window.openflow;
+const api = window.openflowDiagram;
 const $ = sel => document.querySelector(sel);
 
 /* ---------- settings ---------- */
@@ -31,7 +31,7 @@ const DEFAULT_SETTINGS = {
 
 function loadSettings() {
   try {
-    const saved = JSON.parse(localStorage.getItem('openflow.settings') || '{}');
+    const saved = JSON.parse(localStorage.getItem('openflowdiagram.settings') || '{}');
     // Version 2 introduced the light "system" look: move users off the old default scheme.
     if ((saved.settingsVersion || 1) < 2) {
       if (!saved.scheme || saved.scheme === 'pastel' || saved.scheme === 'night') saved.scheme = 'system';
@@ -48,7 +48,7 @@ function loadSettings() {
 const settings = loadSettings();
 const saveSettings = () => {
   try {
-    localStorage.setItem('openflow.settings', JSON.stringify(settings));
+    localStorage.setItem('openflowdiagram.settings', JSON.stringify(settings));
   } catch { /* settings are a convenience only */ }
 };
 
@@ -548,7 +548,7 @@ async function deleteFunctionAt(index) {
 }
 
 async function importFunctions() {
-  const res = await api.openDialog({ filters: [{ name: 'Openflow / Flowgorithm', extensions: ['fprg'] }] });
+  const res = await api.openDialog({ filters: [{ name: 'OpenflowDiagram / Flowgorithm', extensions: ['fprg'] }] });
   if (!res) return;
   let other;
   try {
@@ -963,7 +963,7 @@ async function openPath(path) {
 
 async function openFile() {
   if (!(await confirmDiscard())) return;
-  const res = await api.openDialog({ filters: [{ name: 'Openflow / Flowgorithm', extensions: ['fprg'] }] });
+  const res = await api.openDialog({ filters: [{ name: 'OpenflowDiagram / Flowgorithm', extensions: ['fprg'] }] });
   if (!res) return;
   try {
     loadProgram(programFromXml(res.text), res.path);
@@ -976,7 +976,7 @@ async function save(forceDialog = false) {
   let path = state.filePath;
   if (!path || forceDialog) {
     const suggested = (state.program.attributes.name || t('untitled')).replace(/[\\/:*?"<>|]/g, '') + '.fprg';
-    path = await api.saveDialog({ defaultPath: suggested, filters: [{ name: 'Openflow / Flowgorithm', extensions: ['fprg'] }] });
+    path = await api.saveDialog({ defaultPath: suggested, filters: [{ name: 'OpenflowDiagram / Flowgorithm', extensions: ['fprg'] }] });
     if (!path) return false;
   }
   try {
@@ -1129,7 +1129,7 @@ const commands = {
   traceTable: () => (state.view === 'trace' ? setView('chart') : openTraceTable()),
   help: () => infoBox(t('documentation'), t('helpText')),
   guide: () => api.openGuide(),
-  about: () => infoBox(t('about'), `<p><b>Openflow</b> ${api.version}</p><p>${t('aboutText')}</p>`),
+  about: () => infoBox(t('about'), `<p><b>OpenflowDiagram</b> ${api.version}</p><p>${t('aboutText')}</p>`),
 };
 
 for (const name of Object.keys(LAYOUTS)) commands[name] = () => applyLayout(name);

@@ -1,4 +1,4 @@
-// `electron tools/guide-pdf.cjs [preview-dir]`: prints src/docs/guida.html to docs/Openflow - Guida introduttiva.pdf.
+// `electron tools/guide-pdf.cjs [preview-dir]`: prints src/docs/guida.html to docs/OpenflowDiagram - Guida introduttiva.pdf.
 // With preview-dir, also saves screenshots of the guide at a few scroll positions (for review).
 const { app, BrowserWindow } = require('electron');
 const fs = require('fs');
@@ -25,7 +25,7 @@ app.whenReady().then(async () => {
     console.log(`preview: ${shots} pages, height ${height}px`);
   }
   const pdf = await win.webContents.printToPDF({ pageSize: 'A4', printBackground: true, margins: { marginType: 'default' } });
-  const out = path.join(root, 'docs', 'Openflow - Guida introduttiva.pdf');
+  const out = path.join(root, 'docs', 'OpenflowDiagram - Guida introduttiva.pdf');
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, pdf);
   console.log(`pdf: ${out} (${Math.round(pdf.length / 1024)} KB)`);

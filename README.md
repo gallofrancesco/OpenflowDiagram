@@ -1,11 +1,11 @@
-# Openflow
+# OpenflowDiagram
 
 Ambiente di programmazione con diagrammi di flusso (sul modello di Flowgorithm), con esecuzione
 passo passo e traduzione del diagramma in **C, C++, Java e Python**.
 
 ## Uso
 
-- Installer: `dist\Openflow Setup 1.0.0.exe` (installazione per utente, collegamenti su desktop e menu Start).
+- Installer: `dist\OpenflowDiagram Setup 1.0.0.exe` (installazione per utente, collegamenti su desktop e menu Start).
 - File: formato `.fprg` (XML), compatibile con i file di Flowgorithm per i blocchi standard.
 - Esempi: menu **File › Esempi**.
 - Esecuzione: **Esegui** (F5), **Passo** (F10, un blocco alla volta), **Pausa** (F6), **Ferma** (Maiusc+F5).
@@ -20,7 +20,7 @@ passo passo e traduzione del diagramma in **C, C++, Java e Python**.
 npm install                 # poi, se npm blocca gli script: node node_modules/electron/install.js
 npm start                   # avvia l'app
 npm test                    # test del nucleo; il codice generato viene eseguito con python e java
-npm run dist:win            # installer Windows (dist/Openflow Setup x.y.z.exe)
+npm run dist:win            # installer Windows (dist/OpenflowDiagram Setup x.y.z.exe)
 npm run dist:linux          # AppImage, .deb e .tar.gz (da Windows riesce solo il .tar.gz)
 npm run dist:mac            # .dmg e .zip universali (solo su un Mac)
 ```
@@ -35,7 +35,7 @@ I pacchetti non sono firmati: Windows SmartScreen e macOS Gatekeeper mostrano un
 (su Mac: clic destro sull'app › Apri). Per eliminarlo servono un certificato di firma Windows e un account
 Apple Developer, da configurare come segreti della pipeline.
 
-Per eseguire nei test anche il C e il C++ generati, imposta `OPENFLOW_CC` e `OPENFLOW_CXX`
+Per eseguire nei test anche il C e il C++ generati, imposta `OPENFLOWDIAGRAM_CC` e `OPENFLOWDIAGRAM_CXX`
 (ad es. `python -m ziglang cc` / `python -m ziglang c++`).
 
 Test dell'interfaccia: `electron tests/ui-smoke.cjs <screenshot.png> [programma.fprg] [script.js]`
@@ -44,7 +44,7 @@ Test dell'interfaccia: `electron tests/ui-smoke.cjs <screenshot.png> [programma.
 ## Guida introduttiva
 
 La guida illustrata è `src/docs/guida.html` (nell'app: **Aiuto › Guida introduttiva**, F1); la versione PDF è
-`docs/Openflow - Guida introduttiva.pdf`. Per rigenerarla dopo modifiche all'interfaccia:
+`docs/OpenflowDiagram - Guida introduttiva.pdf`. Per rigenerarla dopo modifiche all'interfaccia:
 
 ```
 node tools/screenshots.mjs          # screenshot dall'interfaccia vera → src/docs/img/
