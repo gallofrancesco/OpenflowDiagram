@@ -68,6 +68,7 @@ const state = {
   errorKey: null,
   view: 'chart',        // 'chart' or 'trace'
   traceConfig: null,    // what the trace table follows: { items, output }
+  traceDetached: false, // true when the trace table is shown in its own floating window
 };
 
 const SPEEDS = { slow: 900, medium: 350, fast: 80, full: 0 };
@@ -209,6 +210,38 @@ function setupPanels() {
   applyPanels();
 }
 
+let floatingZ = 40;
+const bringToFront = win => { win.style.zIndex = String(++floatingZ); };
+
+function makeDraggable(win, handle, posKey) {
+  win.addEventListener('pointerdown', () => bringToFront(win));
+  handle.addEventListener('pointerdown', e => {
+    if (e.target.closest('button, select, input, label')) return;
+    bringToFront(win);
+    const start = { x: e.clientX, y: e.clientY, left: win.offsetLeft, top: win.offsetTop };
+    handle.setPointerCapture(e.pointerId);
+    const move = ev => {
+      const area = $('#workspace').getBoundingClientRect();
+      win.style.right = 'auto';
+      win.style.left = `${Math.max(0, Math.min(area.width - 120, start.left + ev.clientX - start.x))}px`;
+      win.style.top = `${Math.max(0, Math.min(area.height - 40, start.top + ev.clientY - start.y))}px`;
+    };
+    const up = () => {
+      handle.removeEventListener('pointermove', move);
+      handle.removeEventListener('pointerup', up);
+      settings[posKey] = { left: win.offsetLeft, top: win.offsetTop };
+      saveSettings();
+    };
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', up);
+  });
+  if (settings[posKey]) {
+    win.style.right = 'auto';
+    win.style.left = `${settings[posKey].left}px`;
+    win.style.top = `${settings[posKey].top}px`;
+  }
+}
+
 // The source code lives in its own floating window, hidden until the user asks for it.
 function setupCodeWindow(toolBtn) {
   const body = h('div', { class: 'codewin-body' });
@@ -226,36 +259,16 @@ function setupCodeWindow(toolBtn) {
   codePanel.lineNumbers = settings.lineNumbers;
   title.querySelector('.lang-slot').replaceWith(codePanel.select);
 
-  // Drag the window by its title bar, kept inside the workspace.
-  title.addEventListener('pointerdown', e => {
-    if (e.target.closest('button, select')) return;
-    const start = { x: e.clientX, y: e.clientY, left: win.offsetLeft, top: win.offsetTop };
-    title.setPointerCapture(e.pointerId);
-    const move = ev => {
-      const area = $('#workspace').getBoundingClientRect();
-      win.style.left = `${Math.max(0, Math.min(area.width - 120, start.left + ev.clientX - start.x))}px`;
-      win.style.top = `${Math.max(0, Math.min(area.height - 40, start.top + ev.clientY - start.y))}px`;
-    };
-    const up = () => {
-      title.removeEventListener('pointermove', move);
-      title.removeEventListener('pointerup', up);
-      settings.codePos = { left: win.offsetLeft, top: win.offsetTop };
-      saveSettings();
-    };
-    title.addEventListener('pointermove', move);
-    title.addEventListener('pointerup', up);
-  });
-  if (settings.codePos) {
-    win.style.left = `${settings.codePos.left}px`;
-    win.style.top = `${settings.codePos.top}px`;
-  }
+  makeDraggable(win, title, 'codePos');
   win.hidden = !settings.codeOpen;
 }
 
 function toggleCode(on = !settings.codeOpen) {
   settings.codeOpen = on;
   saveSettings();
-  $('#code-window').hidden = !on;
+  const win = $('#code-window');
+  win.hidden = !on;
+  if (on) bringToFront(win);
   document.querySelector('[data-cmd="toggleCode"]')?.classList.toggle('on', on);
   updateCode();
   buildMenu();
@@ -745,27 +758,63 @@ function setupViews() {
     h('label', { class: 'check' }, only, t('traceOnlyChanges')),
     h('span', { class: 'spacer' }),
     h('span', { id: 'trace-count', class: 'muted' }),
+    h('button', { id: 'trace-detach', onclick: () => setTraceDetached(true) }, h('span', { class: 'ico', html: icon('detach') }), t('traceDetach')),
     h('button', { id: 'trace-export', onclick: exportTrace }, h('span', { class: 'ico', html: icon('save') }), t('traceExportPng')),
   );
+
+  const traceWin = $('#trace-window');
+  const traceTitle = h('div', { class: 'codewin-title' },
+    h('span', { class: 'codewin-name' }, t('traceTable')),
+    h('span', { class: 'codewin-tools' },
+      h('button', { class: 'small', onclick: () => setTraceDetached(false, true) }, t('traceDock'))),
+    h('button', { class: 'icon', title: t('close'), 'aria-label': t('close'), onclick: () => setTraceDetached(false, false) }, '✕'));
+  const traceBody = h('div', { class: 'tracewin-body' });
+  traceWin.append(traceTitle, traceBody);
+  makeDraggable(traceWin, traceTitle, 'tracePos');
+
   setView(state.view);
 }
 
+function setTraceDetached(detached, showTab = false) {
+  const win = $('#trace-window');
+  const tv = $('#trace-view');
+  if (detached) {
+    state.traceDetached = true;
+    win.querySelector('.tracewin-body').append(tv);
+    tv.hidden = false;
+    win.hidden = false;
+    bringToFront(win);
+    setView('chart');
+    renderTrace(true);
+  } else {
+    state.traceDetached = false;
+    win.hidden = true;
+    $('#chart-pane').append(tv);
+    setView(showTab ? 'trace' : 'chart');
+  }
+}
+
 function setView(view) {
+  if (view === 'trace' && state.traceDetached) {
+    state.traceDetached = false;
+    $('#trace-window').hidden = true;
+    $('#chart-pane').append($('#trace-view'));
+  }
   state.view = view;
   $('#chart-scroll').hidden = view !== 'chart';
-  $('#trace-view').hidden = view !== 'trace';
+  $('#trace-view').hidden = view !== 'trace' && !state.traceDetached;
   for (const b of document.querySelectorAll('.view-tab')) {
     b.classList.toggle('active', b.dataset.view === view);
     b.setAttribute('aria-selected', String(b.dataset.view === view));
   }
-  document.querySelector('[data-cmd="traceTable"]')?.classList.toggle('on', view === 'trace');
+  document.querySelector('[data-cmd="traceTable"]')?.classList.toggle('on', view === 'trace' || state.traceDetached);
   if (view === 'trace') renderTrace(true);
   else renderChart();
 }
 
 // Redraws the table at most every 120 ms while a program runs at speed.
 function renderTrace(force = false) {
-  if (state.view !== 'trace') return;
+  if (state.view !== 'trace' && !state.traceDetached) return;
   const now = performance.now();
   if (!force && now - traceRenderedAt < 120) {
     if (!traceTimer) traceTimer = setTimeout(() => { traceTimer = null; renderTrace(true); }, 130);
@@ -793,7 +842,11 @@ async function chooseTraceValues() {
 }
 
 async function openTraceTable() {
-  setView('trace');
+  if (state.traceDetached) {
+    bringToFront($('#trace-window'));
+  } else {
+    setView('trace');
+  }
   if (!state.traceConfig) await chooseTraceValues();
 }
 
@@ -1351,6 +1404,7 @@ const ICONS = {
   file: 'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M8.5 12.5h7M8.5 16.5h7',
   chart: 'M9 3.5h6v4H9zM12 7.5v3M7 10.5h10l-2 4H9zM12 14.5v3M9 17.5h6v3H9z',
   trace: 'M3.5 5h17v14h-17zM3.5 9.5h17M3.5 14h17M9 5v14M14.5 5v14',
+  detach: 'M14 4h6v6M10 14L20 4M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6',
 };
 
 function icon(name) {

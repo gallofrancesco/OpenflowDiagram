@@ -231,7 +231,7 @@ body.running #chart .gap { cursor: default; pointer-events: none; }
   background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm); overflow: hidden;
 }
-.panel[hidden], #side[hidden], #splitter[hidden], #popup[hidden], #code-window[hidden] { display: none; }
+.panel[hidden], #side[hidden], #splitter[hidden], #popup[hidden], #code-window[hidden], #trace-window[hidden] { display: none; }
 .panel header {
   display: flex; align-items: center; gap: 8px; padding: 8px 10px 8px 16px;
   background: var(--header-bg); border-bottom: 1px solid var(--border-light);
@@ -304,12 +304,16 @@ body.running #chart .gap { cursor: default; pointer-events: none; }
 .file-line.done .src { color: #aeaeb2; }
 .file-line.next { background: var(--hl); box-shadow: inset 3px 0 0 var(--warning); }
 
-/* floating source-code window (card with shadow) */
-#code-window {
+/* floating source-code & trace-table windows (cards with shadow) */
+#code-window, #trace-window {
   position: absolute; top: 26px; left: 30px; z-index: 40;
   width: min(580px, 48%); height: min(600px, calc(100% - 52px)); min-width: 340px; min-height: 220px;
   display: flex; flex-direction: column; resize: both; overflow: hidden;
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+}
+#trace-window {
+  top: 56px; left: auto; right: 30px;
+  width: min(640px, 52%); height: min(520px, calc(100% - 82px)); min-width: 380px;
 }
 .codewin-title {
   display: flex; align-items: center; gap: 8px; padding: 9px 10px 9px 16px; cursor: grab; user-select: none;
@@ -320,6 +324,8 @@ body.running #chart .gap { cursor: default; pointer-events: none; }
 .codewin-tools { display: flex; gap: 6px; align-items: center; }
 .codewin-tools select { min-height: 30px; padding: 2px 8px; font-size: 13px; }
 .codewin-body { flex: 1; min-height: 0; overflow: auto; }
+.tracewin-body { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+#trace-window #trace-detach { display: none; }
 
 .code { margin: 0; padding: 10px 0; font: 14px/1.65 var(--mono); min-height: 100%; }
 .code-line { display: flex; white-space: pre; padding-right: 14px; }
