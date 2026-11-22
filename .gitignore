@@ -11,3 +11,28 @@ Thumbs.db
 
 # files written by the example programs when run from the project folder
 examples/*.txt
+
+# LaTeX auxiliary files
+*.aux
+*.toc
+*.lof
+*.lot
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.nav
+*.snm
+*.vrb
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.idx
+*.ilg
+*.ind
+*.dvi
+*.xdv
+*.pdfsync
+*.tex.bak
