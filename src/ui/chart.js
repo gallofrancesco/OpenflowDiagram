@@ -85,7 +85,7 @@ function layoutStatement(s, style) {
       place(x, y, out) {
         out.shapes.push({ ...shape, x, y });
         const midY = y + size.h / 2, top = y + size.h, bottom = top + body.h;
-        body.place(x, top, out, s, 'body');
+        body.place(x, top, out, s, 'body', true);
         out.lines.push({ pts: [[x, bottom], [x, bottom + 10], [x + backX, bottom + 10], [x + backX, midY], [x - size.w / 2, midY]], arrow: true });
         out.lines.push({ pts: [[x + size.w / 2, midY], [x + exitX, midY], [x + exitX, bottom + 22], [x, bottom + 22], [x, y + size.h + body.h + 24]] });
         out.labels.push({ x: x + 5, y: top + 12, text: t('trueWord'), anchor: 'start' });
@@ -102,7 +102,7 @@ function layoutStatement(s, style) {
       place(x, y, out) {
         out.lines.push({ pts: [[x, y], [x, y + GAP / 2]] });
         const top = y + GAP / 2;
-        body.place(x, top, out, s, 'body');
+        body.place(x, top, out, s, 'body', true);
         const hy = top + body.h;
         out.shapes.push({ ...shape, x, y: hy });
         const midY = hy + size.h / 2;
@@ -284,7 +284,7 @@ export function renderSvg(layout, options) {
 
   if (interactive) {
     layout.gaps.forEach((g, i) => {
-      parts.push(`<rect class="gap" data-gap="${i}" x="${g.x - 16}" y="${g.y1 + 2}" width="32" height="${g.y2 - g.y1 - 4}" fill="transparent"/>`);
+      parts.push(`<rect class="gap" data-gap="${i}" x="${g.x - 28}" y="${g.y1}" width="56" height="${g.y2 - g.y1}" fill="transparent" pointer-events="all"/>`);
     });
   }
   parts.push('</svg>');

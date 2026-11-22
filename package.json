@@ -18,16 +18,29 @@
     "dist:linux": "electron-builder --linux AppImage deb tar.gz"
   },
   "devDependencies": {
-    "electron": "38.8.6",
-    "electron-builder": "26.15.3"
+    "electron": "^45.4.1",
+    "electron-builder": "^26.18.0"
   },
   "build": {
     "appId": "app.openflowdiagram.editor",
     "productName": "OpenflowDiagram",
     "artifactName": "OpenflowDiagram-${version}-${os}-${arch}.${ext}",
-    "directories": { "output": "dist" },
-    "files": ["main.cjs", "preload.cjs", "package.json", "src/**/*", "build/icon.png"],
-    "extraResources": [{ "from": "examples", "to": "examples" }],
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "package.json",
+      "src/**/*",
+      "build/icon.png"
+    ],
+    "extraResources": [
+      {
+        "from": "examples",
+        "to": "examples"
+      }
+    ],
     "electronFuses": {
       "runAsNode": false,
       "enableCookieEncryption": true,
@@ -36,7 +49,10 @@
       "enableEmbeddedAsarIntegrityValidation": true,
       "onlyLoadAppFromAsar": true
     },
-    "win": { "target": "nsis", "icon": "build/icon.png" },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png"
+    },
     "nsis": {
       "artifactName": "OpenflowDiagram Setup ${version}.${ext}",
       "oneClick": false,
@@ -48,19 +64,43 @@
       "uninstallDisplayName": "OpenflowDiagram"
     },
     "mac": {
-      "target": [{ "target": "dmg", "arch": ["universal"] }, { "target": "zip", "arch": ["universal"] }],
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
       "icon": "build/icon.png",
       "category": "public.app-category.education",
       "hardenedRuntime": true
     },
-    "dmg": { "title": "OpenflowDiagram ${version}" },
+    "dmg": {
+      "title": "OpenflowDiagram ${version}"
+    },
     "linux": {
-      "target": ["AppImage", "deb", "tar.gz"],
+      "target": [
+        "AppImage",
+        "deb",
+        "tar.gz"
+      ],
       "icon": "build/icon.png",
       "category": "Education",
       "maintainer": "Francesco Gallo",
       "synopsis": "Programmare con i diagrammi di flusso",
-      "desktop": { "entry": { "Name": "OpenflowDiagram", "Comment": "Programmare con i diagrammi di flusso" } }
+      "desktop": {
+        "entry": {
+          "Name": "OpenflowDiagram",
+          "Comment": "Programmare con i diagrammi di flusso"
+        }
+      }
     }
   }
 }

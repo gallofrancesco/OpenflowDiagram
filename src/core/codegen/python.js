@@ -144,10 +144,23 @@ export class PythonGenerator extends Generator {
         const v = this.ex(s.variable);
         const step = (s.step || '1').trim();
         const inc = s.direction !== 'dec';
-        const end = inc ? `${this.ex(s.end)} + 1` : `${this.ex(s.end)} - 1`;
-        let args = `${this.ex(s.start)}, ${end}`;
-        if (!inc) args += `, -${step === '1' ? '1' : `(${this.ex(step)})`}`;
-        else if (step !== '1') args += `, ${this.ex(step)}`;
+        const start = this.ex(s.start);
+        const endNode = this.parse(s.end);
+        let endStr;
+        if (endNode && endNode.k === 'lit' && endNode.type === 'Integer') {
+          endStr = String(inc ? endNode.value + 1 : endNode.value - 1);
+        } else {
+          endStr = inc ? `${this.ex(s.end)} + 1` : `${this.ex(s.end)} - 1`;
+        }
+        let args;
+        if (!inc) {
+          const stepArg = step === '1' ? '-1' : `-${step.match(/^[a-zA-Z_]\w*$|^\d+$/) ? step : `(${this.ex(step)})`}`;
+          args = `${start}, ${endStr}, ${stepArg}`;
+        } else if (step !== '1') {
+          args = `${start}, ${endStr}, ${this.ex(step)}`;
+        } else {
+          args = `${start}, ${endStr}, 1`;
+        }
         this.emit(`for ${v} in range(${args}):`, id, d);
         this.body(s.body, d + 1, id);
         break;

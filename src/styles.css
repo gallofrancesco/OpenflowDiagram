@@ -216,9 +216,9 @@ input[type=checkbox], input[type=radio] { width: 17px; height: 17px; accent-colo
 #chart svg { display: inline-block; vertical-align: top; }
 #chart .shape { cursor: pointer; }
 #chart .shape:hover > :not(text) { filter: brightness(0.97); }
-#chart .gap { cursor: copy; }
-#chart .gap:hover { fill: var(--primary); fill-opacity: 0.16; }
-body.running #chart .gap { cursor: default; }
+#chart .gap { cursor: pointer; pointer-events: all; }
+#chart .gap:hover { fill: var(--primary); fill-opacity: 0.22; rx: 6px; }
+body.running #chart .gap { cursor: default; pointer-events: none; }
 
 #splitter { width: 14px; cursor: col-resize; position: relative; }
 #splitter::after { content: ""; position: absolute; left: 6px; top: 46%; height: 40px; width: 3px; border-radius: 2px; background: var(--border); }

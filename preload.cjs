@@ -34,4 +34,5 @@ contextBridge.exposeInMainWorld('openflowDiagram', {
   pathForFile: file => webUtils.getPathForFile(file),
   clipboardWrite: text => clipboard.writeText(text),
   clipboardRead: () => clipboard.readText(),
+  toggleDevTools: () => ipcRenderer.send('app:toggle-devtools'),
 });

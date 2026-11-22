@@ -132,6 +132,7 @@ ipcMain.on('app:close-confirmed', () => {
 });
 
 ipcMain.on('app:close-window', () => win && win.close());
+ipcMain.on('app:toggle-devtools', () => win && win.webContents.toggleDevTools());
 
 // The getting-started guide opens in its own sandboxed window without access to Node.
 let guideWin = null;

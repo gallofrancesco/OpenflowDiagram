@@ -507,7 +507,7 @@ function showPopup(x, y, content) {
 }
 
 function showInsertMenu(gap, x, y) {
-  if (guardRunning()) return;
+  if (guardRunning() || !gap) return;
   // Each button shows the shape itself, drawn with the current chart style and colors.
   const style = CHART_STYLES[settings.style] || CHART_STYLES.standard;
   const groups = INSERT_GROUPS.map(([title, kinds]) => h('div', { class: 'insert-group', 'data-group': title },
@@ -517,7 +517,15 @@ function showInsertMenu(gap, x, y) {
       html: shapeIcon(k, t(`shape_${k}`), scheme(), style),
       onclick: () => { closePopup(); insertStatement(gap, k); },
     })))));
-  const hasClip = state.clipboard.length || (api.clipboardRead() || '').includes('<clip');
+  let hasClip = Boolean(state.clipboard?.length);
+  if (!hasClip) {
+    try {
+      const clipText = api?.clipboardRead?.();
+      hasClip = Boolean(clipText && clipText.includes('<clip'));
+    } catch {
+      hasClip = false;
+    }
+  }
   const paste = h('button', { class: 'insert-paste', disabled: !hasClip, onclick: () => { closePopup(); pasteAt(gap); } }, t('paste'));
   showPopup(x, y, h('div', { class: 'insert-menu' }, ...groups, paste));
 }
@@ -540,9 +548,12 @@ function setupChartEvents() {
   const chart = $('#chart');
   chart.addEventListener('click', e => {
     const gap = e.target.closest('.gap');
-    if (gap) {
-      showInsertMenu(state.layout.gaps[+gap.dataset.gap], e.clientX, e.clientY);
-      return;
+    if (gap && state.layout?.gaps) {
+      const g = state.layout.gaps[+gap.dataset.gap];
+      if (g) {
+        showInsertMenu(g, e.clientX, e.clientY);
+        return;
+      }
     }
     const shape = e.target.closest('.shape');
     if (shape && !shape.dataset.terminal) {
@@ -556,6 +567,14 @@ function setupChartEvents() {
     }
   });
   chart.addEventListener('dblclick', e => {
+    const gap = e.target.closest('.gap');
+    if (gap && state.layout?.gaps) {
+      const g = state.layout.gaps[+gap.dataset.gap];
+      if (g) {
+        showInsertMenu(g, e.clientX, e.clientY);
+        return;
+      }
+    }
     const shape = e.target.closest('.shape');
     if (!shape) return;
     if (shape.dataset.terminal) {
@@ -568,7 +587,10 @@ function setupChartEvents() {
   chart.addEventListener('contextmenu', e => {
     e.preventDefault();
     const gap = e.target.closest('.gap');
-    if (gap) return showInsertMenu(state.layout.gaps[+gap.dataset.gap], e.clientX, e.clientY);
+    if (gap && state.layout?.gaps) {
+      const g = state.layout.gaps[+gap.dataset.gap];
+      if (g) return showInsertMenu(g, e.clientX, e.clientY);
+    }
     const shape = e.target.closest('.shape');
     if (shape && !shape.dataset.terminal) showShapeMenu(Number(shape.dataset.key), e.clientX, e.clientY);
   });
@@ -578,7 +600,7 @@ function setupChartEvents() {
     zoomBy(e.deltaY < 0 ? 1.1 : 1 / 1.1);
   }, { passive: false });
   document.addEventListener('mousedown', e => {
-    if (!$('#popup').hidden && !e.target.closest('#popup')) closePopup();
+    if (!$('#popup').hidden && !e.target.closest('#popup') && !e.target.closest('.gap')) closePopup();
   });
 }
 
@@ -1154,6 +1176,33 @@ const commands = {
   copy: copySelection,
   paste: pasteCommand,
   delete: deleteSelection,
+  insertShape() {
+    if (guardRunning()) return;
+    let gapIndex = 0;
+    const info = selectedInfo();
+    if (info && state.layout?.gaps) {
+      const selectedStmt = info.block[info.start];
+      if (selectedStmt && ['for', 'while', 'do', 'if'].includes(selectedStmt.kind)) {
+        const slot = selectedStmt.kind === 'if' ? 'then' : 'body';
+        const insideIdx = state.layout.gaps.findIndex(g => g.parent === selectedStmt && g.slot === slot);
+        if (insideIdx >= 0) gapIndex = insideIdx;
+        else {
+          const gIdx = state.layout.gaps.findIndex(g => g.list === info.block && g.index === info.end + 1);
+          if (gIdx >= 0) gapIndex = gIdx;
+        }
+      } else {
+        const gIdx = state.layout.gaps.findIndex(g => g.list === info.block && g.index === info.end + 1);
+        if (gIdx >= 0) gapIndex = gIdx;
+      }
+    }
+    const gap = (state.layout?.gaps && state.layout.gaps[gapIndex]) || state.layout?.gaps?.[0];
+    if (!gap) return;
+    const pane = $('#chart-pane') || document.body;
+    const r = pane.getBoundingClientRect();
+    const x = Math.round(r.left + Math.max(20, (r.width - 410) / 2));
+    const y = Math.round(r.top + Math.min(100, r.height / 4));
+    showInsertMenu(gap, x, y);
+  },
   editShape: () => state.selection.length && editSelected(state.selection[0]),
   selectNone() {
     closePopup();
@@ -1215,6 +1264,7 @@ const commands = {
   help: () => infoBox(t('documentation'), t('helpText')),
   guide: () => api.openGuide(),
   about: () => infoBox(t('about'), `<p><b>OpenflowDiagram</b> ${api.version}</p><p>${t('aboutText')}</p>`),
+  toggleDevTools: () => api?.toggleDevTools?.(),
 };
 
 for (const name of Object.keys(LAYOUTS)) commands[name] = () => applyLayout(name);
@@ -1256,7 +1306,7 @@ function runCommand(id) {
 
 const SHORTCUTS = {
   new: 'Ctrl+N', open: 'Ctrl+O', save: 'Ctrl+S', saveAs: 'Ctrl+Shift+S', print: 'Ctrl+P',
-  undo: 'Ctrl+Z', redo: 'Ctrl+Y', cut: 'Ctrl+X', copy: 'Ctrl+C', paste: 'Ctrl+V', delete: 'Delete',
+  undo: 'Ctrl+Z', redo: 'Ctrl+Y', insertShape: 'Insert', cut: 'Ctrl+X', copy: 'Ctrl+C', paste: 'Ctrl+V', delete: 'Delete',
   editShape: 'Enter', run: 'F5', step: 'F10', pause: 'F6', stop: 'Shift+F5',
   zoomIn: 'Ctrl+=', zoomOut: 'Ctrl+-', zoomReset: 'Ctrl+0', guide: 'F1', toggleCode: 'F4', traceTable: 'F7',
 };
@@ -1309,8 +1359,9 @@ function buildMenu() {
       item('exportPng'), item('exportSvg'), item('print'), { type: 'separator' }, item('exit'),
     ] },
     { label: t('edit'), submenu: [
-      item('undo'), item('redo'), { type: 'separator' }, item('cut'), item('copy'), item('paste'), item('delete'),
-      { type: 'separator' }, item('editShape'),
+      item('undo'), item('redo'), { type: 'separator' },
+      item('insertShape'), item('editShape'), { type: 'separator' },
+      item('cut'), item('copy'), item('paste'), item('delete'),
     ] },
     { label: t('program'), submenu: [
       item('run'), item('step'), item('pause'), item('stop'), { type: 'separator' },
@@ -1331,7 +1382,7 @@ function buildMenu() {
       { label: t('chartStyle'), submenu: Object.entries(CHART_STYLES).map(([k, v]) => radio(`style_${k}`, v.name, settings.style === k)) },
     ] },
     { label: t('tools'), submenu: [item('settings')] },
-    { label: t('help'), submenu: [item('guide'), item('help', { label: t('documentation') }), { type: 'separator' }, item('about')] },
+    { label: t('help'), submenu: [item('guide'), item('help', { label: t('documentation') }), { type: 'separator' }, item('toggleDevTools', { accelerator: 'F12' }), { type: 'separator' }, item('about')] },
   ];
   api.setMenu(template);
 }
@@ -1366,9 +1417,12 @@ function setupToolbar() {
   const traceBtn = btn('traceTable', 'trace', t('traceTable'));
   traceBtn.querySelector('.lbl').textContent = t('traceShort');
   traceBtn.classList.add('toggle', 'code-toggle');
+  const insertBtn = btn('insertShape', 'add', t('insertShape'));
+  insertBtn.querySelector('.lbl').textContent = t('insertShapeShort');
   bar.append(
     group(btn('new', 'new', t('new'), true), btn('open', 'open', t('open').replace('…', ''), true), btn('save', 'save', t('save'), true)),
     group(btn('undo', 'undo', t('undo'), true), btn('redo', 'redo', t('redo'), true)), sep(),
+    group(insertBtn), sep(),
     group(btn('run', 'run', t('run')), btn('step', 'step', t('step')), btn('pause', 'pause', t('pause'), true), btn('stop', 'stop', t('stop'), true)), speed, sep(),
     funcSel,
     group(btn('addFunction', 'add', t('addFunction').replace('…', ''), true), funcBtn),
@@ -1392,6 +1446,7 @@ function updateToolbar() {
   set('stop', m !== 'idle');
   set('undo', !runner.active && state.undo.length > 0);
   set('redo', !runner.active && state.redo.length > 0);
+  set('insertShape', !runner.active);
   document.body.classList.toggle('running', runner.active);
   if (!runner.active) status(state.errorKey ? t('runtimeError') : t('ready'));
   else if (m === 'running') status(t('running'));
@@ -1412,6 +1467,10 @@ function keyName(e) {
 function setupKeyboard() {
   const byKey = Object.fromEntries(Object.entries(SHORTCUTS).map(([id, k]) => [k, id]));
   document.addEventListener('keydown', e => {
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i'))) {
+      api?.toggleDevTools?.();
+      return;
+    }
     if (isModalOpen()) return;
     if (e.key === 'Escape') {
       commands.selectNone();

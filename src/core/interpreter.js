@@ -124,7 +124,7 @@ export class Interpreter {
      files: { read(name) -> string (throws if missing), write(name, text) },
    }
   */
-  constructor(program, host, { maxStack = 1000 } = {}) {
+  constructor(program, host, { maxStack = 200 } = {}) {
     this.program = program;
     this.host = host;
     this.maxStack = maxStack;
