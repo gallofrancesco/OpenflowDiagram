@@ -384,6 +384,7 @@ function selectShape(id, extend) {
       return;
     }
   }
+  if (!extend && state.selection.length === 1 && state.selection[0] === id) return;
   state.selection = [id];
   renderChart();
   updateCode();
@@ -546,20 +547,41 @@ function showShapeMenu(id, x, y) {
 
 function setupChartEvents() {
   const chart = $('#chart');
+  let lastShapeClick = { key: null, time: 0 };
+  const openShapeEditor = shape => {
+    if (isModalOpen()) return;
+    if (shape.dataset.terminal) {
+      if (state.funcIndex === 0) commands.attributes();
+      else editFunctionAt(state.funcIndex);
+    } else {
+      editSelected(Number(shape.dataset.key));
+    }
+  };
   chart.addEventListener('click', e => {
     const gap = e.target.closest('.gap');
     if (gap && state.layout?.gaps) {
       const g = state.layout.gaps[+gap.dataset.gap];
       if (g) {
+        lastShapeClick = { key: null, time: 0 };
         showInsertMenu(g, e.clientX, e.clientY);
         return;
       }
     }
     const shape = e.target.closest('.shape');
-    if (shape && !shape.dataset.terminal) {
-      selectShape(Number(shape.dataset.key), e.shiftKey);
+    if (shape) {
+      const key = shape.dataset.key;
+      const now = Date.now();
+      const isDouble = !e.shiftKey && (e.detail >= 2 || (lastShapeClick.key === key && now - lastShapeClick.time < 450));
+      if (!shape.dataset.terminal) selectShape(Number(key), e.shiftKey);
+      if (isDouble) {
+        lastShapeClick = { key: null, time: 0 };
+        openShapeEditor(shape);
+      } else {
+        lastShapeClick = { key, time: now };
+      }
       return;
     }
+    lastShapeClick = { key: null, time: 0 };
     if (state.selection.length) {
       state.selection = [];
       renderChart();
@@ -577,12 +599,8 @@ function setupChartEvents() {
     }
     const shape = e.target.closest('.shape');
     if (!shape) return;
-    if (shape.dataset.terminal) {
-      if (state.funcIndex === 0) commands.attributes();
-      else editFunctionAt(state.funcIndex);
-    } else {
-      editSelected(Number(shape.dataset.key));
-    }
+    lastShapeClick = { key: null, time: 0 };
+    openShapeEditor(shape);
   });
   chart.addEventListener('contextmenu', e => {
     e.preventDefault();
